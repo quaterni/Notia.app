@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Np.NotesService/.vs
+bin/
+obj/
+/Np.NotesService/Np.NotesService.Api/.sql-scripts
+/Np.NotesService/Np.NotesService.Api/appsettings.Development.json
