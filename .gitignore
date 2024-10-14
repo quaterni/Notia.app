@@ -2,8 +2,14 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/Np.NotesService/.vs
+.vs/
 bin/
 obj/
-/Np.NotesService/Np.NotesService.Api/.sql-scripts
-/Np.NotesService/Np.NotesService.Api/appsettings.Development.json
+.sql-scripts/
+appsettings.Development.json
+Deployment/compose-data
+/Np.NotesService/Np.NotesService.Api/appsettings.Production.json
+/Np.NotesService/Np.NotesService.Api/Np.NotesService.Api.csproj.user
+/Np.RelationsService/Np.RelationsService.Api/appsettings.Production.json
+/Np.RelationsService/Np.RelationsService.Api/Np.RelationsService.Api.csproj.user
+/Np.RelationsService/Np.RelationsService.Api/Np.RelationsService.Api.http

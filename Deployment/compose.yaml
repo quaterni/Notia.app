@@ -1,0 +1,59 @@
+services:
+  notes:
+    restart: always
+    build: 
+      context: ..\Np.NotesService\
+      dockerfile: ..\Np.NotesService\Np.NotesService.Api\Dockerfile
+    ports:
+      - "10080:8080"
+    depends_on:
+      notes.db:
+        condition: service_started
+      messagebus:
+        condition: service_healthy
+  notes.db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=notes_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./compose-data/notes_db:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+  messagebus:
+    image: rabbitmq:4.0-management
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 15s
+      retries: 3
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    volumes:
+      - ./compose-data/rabbitmq:/var/lib/rabbitmq
+  relations:
+    restart: always
+    build: 
+      context: ..\Np.RelationsService\
+      dockerfile: ..\Np.RelationsService\Np.RelationsService.Api\Dockerfile     
+    ports:
+      - "11080:8080"
+      - "11081:8081"
+    depends_on:
+      relations.db:
+        condition: service_started
+      messagebus:
+        condition: service_healthy
+  relations.db:
+    image: postgres:latest
+    container_name: relations_db
+    environment:
+      - POSTGRES_DB=relations_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./compose-data/relations_db:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"

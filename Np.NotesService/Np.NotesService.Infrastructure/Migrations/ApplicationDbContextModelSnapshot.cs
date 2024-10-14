@@ -22,6 +22,37 @@ namespace Np.NotesService.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Np.NotesService.Application.Abstractions.Outbox.OutboxEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("data");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("event_name");
+
+                    b.Property<DateTime>("RefreshTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("refresh_time");
+
+                    b.HasKey("Id")
+                        .HasName("pk_outbox_entries");
+
+                    b.ToTable("outbox_entries", (string)null);
+                });
+
             modelBuilder.Entity("Np.NotesService.Domain.Notes.Note", b =>
                 {
                     b.Property<Guid>("Id")

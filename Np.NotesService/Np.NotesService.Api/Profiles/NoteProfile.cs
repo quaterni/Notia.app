@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Np.NotesService.Api.Controllers.Note;
+using Np.NotesService.Api.Controllers.Notes;
 using Np.NotesService.Application.Notes.AddNote;
 using Np.NotesService.Application.Notes.GetNote;
 using Np.NotesService.Application.Notes.UpdateNote;

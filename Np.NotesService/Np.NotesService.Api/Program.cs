@@ -22,10 +22,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    // app.DropDatabaseAndApplyMigrations();
     app.SeedDataIfEmpty();
 }
-
 app.UseAuthorization();
 
 app.MapControllers();

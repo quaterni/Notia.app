@@ -65,8 +65,8 @@ namespace Np.NotesService.Domain.Tests.Notes
             // Act
             var note = Note.Create(NoteTestData.OneLineNote.Data, _dateTimeProviderMock.Object);
             var createdDomainEvent = note.DomainEvents
-                .FirstOrDefault(e => e.GetType().Equals(typeof(NoteCreatedDomainEvent))) 
-                    as NoteCreatedDomainEvent;
+                .FirstOrDefault(e => e.GetType().Equals(typeof(NoteCreatedEvent))) 
+                    as NoteCreatedEvent;
 
             // Assert
             Assert.NotNull(createdDomainEvent);
@@ -96,8 +96,8 @@ namespace Np.NotesService.Domain.Tests.Notes
 
             // Act
             note.UpdateNote("New Title", _dateTimeProviderMock.Object);
-            var updatedDomainEvent = note.DomainEvents.FirstOrDefault(e=> e is NoteUpdatedDomainEvent)
-                as NoteUpdatedDomainEvent;
+            var updatedDomainEvent = note.DomainEvents.FirstOrDefault(e=> e is NoteChangedEvent)
+                as NoteChangedEvent;
 
             // Assert
             Assert.NotNull(updatedDomainEvent);

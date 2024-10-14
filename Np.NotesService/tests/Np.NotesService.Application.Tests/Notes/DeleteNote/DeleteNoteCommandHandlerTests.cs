@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using Moq;
 using Np.NotesService.Application.Exceptions;
-using Np.NotesService.Application.Notes.DeleteNote;
+using Np.NotesService.Application.Notes.RemoveNote;
 using Np.NotesService.Domain.Abstractions;
 using Np.NotesService.Domain.Notes;
+using Np.NotesService.Domain.Notes.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,9 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
 {
     public class DeleteNoteCommandHandlerTests
     {
-        private readonly DeleteNoteCommand _command = new DeleteNoteCommand(Guid.NewGuid());
+        private readonly RemoveNoteCommand _command = new RemoveNoteCommand(Guid.NewGuid());
 
-        private readonly DeleteNoteCommandHandler _handler;
+        private readonly RemoveNoteCommandHandler _handler;
 
         private readonly Mock<INotesRepository> _notesRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
@@ -27,7 +28,7 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
             _notesRepositoryMock = new Mock<INotesRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
 
-            _handler = new DeleteNoteCommandHandler(
+            _handler = new RemoveNoteCommandHandler(
                 _notesRepositoryMock.Object,
                 _unitOfWorkMock.Object);
         }
@@ -36,12 +37,16 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
         {
             _notesRepositoryMock
                 .Setup(x => x.GetNoteById(It.Is<Guid>(x => x.Equals(_command.NoteId))))
-                .Returns(Task.FromResult(Note.Create("Mock Note", new Mock<IDateTimeProvider>().Object))!);
+                .Returns(()=> {
+                    var note = Note.Create("Mock Note", new Mock<IDateTimeProvider>().Object);
+                    note.ClearDomainEvents();
+                    return Task.FromResult<Note?>(note);
+                });
         }
 
 
         [Fact]
-        public async Task Handle_Should_ReturnSuccess_WhenNoteNotFound()
+        public async Task Handle_ShouldReturnSuccess_WhenNoteNotFound()
         {
             // Arrange
             _notesRepositoryMock
@@ -69,7 +74,7 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
 
 
         [Fact]
-        public async Task Handle_Should_CallRepositoryToDeleteNote_WhenNoteExists()
+        public async Task Handle_ShouldCallRepositoryToDeleteNote_WhenNoteExists()
         {
             // Arrange
             SetupMockToReturnExistingNote();
@@ -85,7 +90,7 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
 
 
         [Fact]
-        public async Task Handle_Should_SaveChanges_WhenDeleteExistingNote()
+        public async Task Handle_ShouldSaveChanges_WhenDeleteExistingNote()
         {
             // Arrange
             SetupMockToReturnExistingNote();
@@ -100,7 +105,7 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
         }
 
         [Fact]
-        public async Task Handle_Should_ReturnSuccess_WhenDeleteExistingNote()
+        public async Task Handle_ShouldReturnSuccess_WhenDeleteExistingNote()
         {
             // Arrange
             SetupMockToReturnExistingNote();
@@ -113,7 +118,7 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
         }
 
         [Fact]
-        public async Task Handle_Should_ThrowConcurrencyException_WhenSaveChangesThrowsInvalidOperationException()
+        public async Task Handle_ShouldThrowConcurrencyException_WhenSaveChangesThrowsInvalidOperationException()
         {
             // Arrange
             SetupMockToReturnExistingNote();
@@ -126,6 +131,21 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
             // Assert
             exception.InnerException.Should().NotBeNull();
             exception.InnerException.Should().BeOfType<InvalidOperationException>();
+        }
+
+        [Fact]
+        public async Task Handle_ShouldAddEvent_IfNoteRemoved()
+        {
+            Note? actualNote = null;
+            SetupMockToReturnExistingNote();
+            _notesRepositoryMock
+                .Setup(x => x.Delete(It.IsAny<Note>()))
+                .Callback<Note>(n=> actualNote = n);
+
+            await _handler.Handle(_command, default);
+
+            actualNote!.DomainEvents.Should().HaveCount(1);
+            actualNote!.DomainEvents.First().Should().Be(new NoteRemovedEvent(actualNote.Id));
         }
     }
 }

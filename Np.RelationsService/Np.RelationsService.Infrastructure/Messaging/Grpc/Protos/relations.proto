@@ -1,0 +1,48 @@
+
+syntax = "proto3";
+
+option csharp_namespace = "Np.RelationsService.Infrastructure.Messaging.Grpc";
+
+service RelationsService {
+    rpc GetNotesFromRoot(GetNotesFromRootRequest) returns (GetNotesFromRootResponse);
+
+    rpc GetOutgoingRelations(GetOutgoingRelationsRequest) returns (GetOutgoingRelationsResponse);
+
+    rpc GetIncomingRelations(GetIncomingRelationsRequest) returns (GetIncomingRelationsResponse);
+}
+
+message UUID {
+    string value = 1;
+}
+
+message GrpcNoteModel{
+    UUID id = 1;
+}
+
+message GrpcRelationModel {
+    UUID id =1;
+    GrpcNoteModel outgoing_note =2;
+    GrpcNoteModel incoming_note =3;
+}
+
+message GetNotesFromRootRequest {}
+
+message GetNotesFromRootResponse{
+    repeated GrpcNoteModel notes = 1;
+}
+
+message GetOutgoingRelationsRequest{
+    GrpcNoteModel note = 1;
+}
+
+message GetOutgoingRelationsResponse{
+    repeated GrpcRelationModel relations = 1;
+}
+
+message GetIncomingRelationsRequest{
+    GrpcNoteModel note =1;
+}
+
+message GetIncomingRelationsResponse{
+    repeated GrpcRelationModel relations = 1;
+}

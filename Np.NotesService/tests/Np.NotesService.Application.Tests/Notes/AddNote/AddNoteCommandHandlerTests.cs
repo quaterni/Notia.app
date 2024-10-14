@@ -3,6 +3,7 @@ using Moq;
 using Np.NotesService.Application.Notes.AddNote;
 using Np.NotesService.Domain.Abstractions;
 using Np.NotesService.Domain.Notes;
+using Np.NotesService.Domain.Notes.Events;
 using Xunit;
 
 namespace Np.NotesService.Application.Tests.Notes.AddNote
@@ -29,7 +30,7 @@ namespace Np.NotesService.Application.Tests.Notes.AddNote
         }
 
         [Fact]
-        public async Task Handle_Should_CallRepository_WhenAddNote()
+        public async Task Handle_ShouldCallRepository_WhenAddNote()
         {
             // Act
             var result = await _handler.Handle(_command, default);
@@ -40,7 +41,7 @@ namespace Np.NotesService.Application.Tests.Notes.AddNote
 
 
         [Fact]
-        public async Task Handle_Should_CallSaveChanges_WhenAddNote()
+        public async Task Handle_ShouldCallSaveChanges_WhenAddNote()
         {
             // Act
             var result = await _handler.Handle(_command, default);
@@ -52,7 +53,7 @@ namespace Np.NotesService.Application.Tests.Notes.AddNote
         }
 
         [Fact]
-        public async Task Handle_Should_ReturnId_WhenAddNote()
+        public async Task Handle_ShouldReturnId_WhenAddNote()
         {
             // Arrange
             Guid? idAddedInRepository = null;
@@ -67,6 +68,20 @@ namespace Np.NotesService.Application.Tests.Notes.AddNote
             result.IsSuccess.Should().BeTrue();
             idAddedInRepository.Should().NotBeNull();
             result.Value.Should().Be((Guid)idAddedInRepository!);
+        }
+
+        [Fact]
+        public async Task Handle_ShouldEvent_IfNoteAdded()
+        {
+            Note? note = null;
+            _notesRepositoryMock
+                .Setup(x => x.Add(It.IsAny<Note>()))
+                .Callback<Note>(n => note= n);
+
+            await _handler.Handle(_command, default);
+
+            note!.DomainEvents.Should().HaveCount(1);
+            note.DomainEvents.First().Should().Be(new NoteCreatedEvent(note.Id));
         }
     }
 }

@@ -21,11 +21,16 @@ namespace Np.NotesService.Domain.Abstractions
 
         public Guid Id { get;}
 
-        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
+        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.ToList();
 
         public void AddDomainEvent(IDomainEvent domainEvent)
         {
             _domainEvents.Add(domainEvent);
+        }
+
+        public void ClearDomainEvents()
+        {
+            _domainEvents.Clear(); 
         }
 
         public override bool Equals(object? obj)

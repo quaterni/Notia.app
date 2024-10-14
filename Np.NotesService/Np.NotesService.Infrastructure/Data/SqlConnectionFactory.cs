@@ -17,9 +17,7 @@ namespace Np.NotesService.Infrastructure.Data
         public IDbConnection CreateConnection()
         {
             var connection = new NpgsqlConnection(_connectionString);
-
             connection.Open();
-
             return connection;
         }
     }

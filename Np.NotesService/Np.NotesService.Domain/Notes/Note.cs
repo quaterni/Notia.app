@@ -57,7 +57,7 @@ namespace Np.NotesService.Domain.Notes
             var id = Guid.NewGuid();
             var note = new Note(title, data, id, currentTime, currentTime);
 
-            note.AddDomainEvent(new NoteCreatedDomainEvent(id));
+            note.AddDomainEvent(new NoteCreatedEvent(id));
 
             return note;
         }
@@ -81,7 +81,7 @@ namespace Np.NotesService.Domain.Notes
 
             LastUpdateTime = dateTimeProvider.GetCurrentTime();
 
-            AddDomainEvent(new NoteUpdatedDomainEvent(Id));
+            AddDomainEvent(new NoteChangedEvent(Id));
 
             return Result.Success();
         }
