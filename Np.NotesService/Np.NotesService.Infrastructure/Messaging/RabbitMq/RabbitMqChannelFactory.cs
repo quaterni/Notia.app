@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
 namespace Np.NotesService.Infrastructure.Messaging.RabbitMq;
@@ -7,11 +8,21 @@ internal class RabbitMqChannelFactory : IDisposable, IRabbitMqChannelFactory
 {
     private readonly IConnection _connection;
 
-    public RabbitMqChannelFactory()
+    private readonly RabbitMqExchangeOptions _rabbitMqExchangeOptions;
+
+    public RabbitMqChannelFactory(
+        IOptions<RabbitMqConnectionOptions> connectionOptions,
+        IOptions<RabbitMqExchangeOptions> exchangeOptions)
     {
+        var opt = connectionOptions.Value;
+
+        _rabbitMqExchangeOptions = exchangeOptions.Value;
         _connection = new ConnectionFactory() 
         {
-            HostName = "messagebus"
+            HostName = opt.HostName,
+            Port = opt.Port,
+            UserName = opt.User,
+            Password = opt.Password
         }.CreateConnection();
     }
 
@@ -20,11 +31,11 @@ internal class RabbitMqChannelFactory : IDisposable, IRabbitMqChannelFactory
         var model = _connection.CreateModel();
 
         model.ExchangeDeclare(
-            exchange: "events", 
-            type: ExchangeType.Fanout, 
-            durable: true, 
-            autoDelete: false, 
-            arguments: null);
+            exchange: _rabbitMqExchangeOptions.ExchangeName, 
+            type: _rabbitMqExchangeOptions.Type, 
+            durable: _rabbitMqExchangeOptions.Durable, 
+            autoDelete: _rabbitMqExchangeOptions.AutoDelete, 
+            arguments: _rabbitMqExchangeOptions.Arguments);
 
         return model;
     }

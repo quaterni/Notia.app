@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Np.NotesService.Domain.Abstractions;
 using Np.NotesService.Infrastructure.Messaging.RabbitMq;
@@ -16,10 +17,16 @@ internal class OutboxWorker : BackgroundService
     private readonly IRabbitMqChannelFactory _rabbitMqChannelFactory;
     private IModel? _channel;
 
-    public OutboxWorker(IServiceProvider provider, IRabbitMqChannelFactory rabbitMqChannelFactory)
+    private readonly OutboxOptions _outboxOptions;
+
+    public OutboxWorker(
+        IServiceProvider provider, 
+        IRabbitMqChannelFactory rabbitMqChannelFactory, 
+        IOptions<OutboxOptions> options)
     {
         _provider = provider;
         _rabbitMqChannelFactory = rabbitMqChannelFactory;
+        _outboxOptions = options.Value;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -29,21 +36,25 @@ internal class OutboxWorker : BackgroundService
             using var scope = _provider.CreateScope();
             var outboxRepository = scope.ServiceProvider.GetRequiredService<OutboxRepository>();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-            var outboxEntries = await outboxRepository.GetEntriesOrderedByRefreshTime(50);
+            var outboxEntries = await outboxRepository.GetEntriesOrderedByRefreshTime(_outboxOptions.EntryLimitPerCheck);
+
             foreach (var outboxEntry in outboxEntries)
             {
-                outboxEntry.RefreshTime = outboxEntry.RefreshTime.AddMinutes(10);
+                outboxEntry.RefreshTime = outboxEntry.RefreshTime
+                    .AddMinutes(_outboxOptions.EntryRefreshTimeMinutes);
                 outboxRepository.Update(outboxEntry);
                 await unitOfWork.SaveChangesAsync(stoppingToken);
-                var eventDto = new EventDto { EventName = outboxEntry.EventName, Body = outboxEntry.Data };
-
+                var eventDto = new EventDto 
+                { 
+                    EventName = outboxEntry.EventName, 
+                    Body = outboxEntry.Data 
+                };
                 SendEvent(eventDto);
 
                 outboxRepository.Remove(outboxEntry);
                 await unitOfWork.SaveChangesAsync(stoppingToken);
             }
-            await Task.Delay(TimeSpan.FromSeconds(3));
-
+            await Task.Delay(TimeSpan.FromMilliseconds(_outboxOptions.CheckDelayMilliseconds));
         }
     }
 

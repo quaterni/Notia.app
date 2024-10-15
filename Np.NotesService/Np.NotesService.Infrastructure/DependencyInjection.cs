@@ -28,15 +28,27 @@ namespace Np.NotesService.Infrastructure
 
             AddPersistance(services, configuration);
 
-            AddMessaging(services);
+            AddMessaging(services, configuration);
             return services;
         }
 
-        private static void AddMessaging(IServiceCollection services)
+        private static void AddMessaging(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IRabbitMqChannelFactory, RabbitMqChannelFactory>();
-            services.AddScoped<OutboxRepository>();
+            services.Configure<GrpcOptions>(
+                GrpcOptions.Relations, 
+                configuration.GetRequiredSection("RelationsService:Grpc"));
+            services.AddScoped<IRelationsService, GrpcRelationsService>();
 
+
+            services.Configure<RabbitMqConnectionOptions>(
+                configuration.GetRequiredSection("RabbitMq:Connection"));
+            services.Configure<RabbitMqExchangeOptions>(
+                configuration.GetRequiredSection("RabbitMq:Exchange"));
+            services.AddSingleton<IRabbitMqChannelFactory, RabbitMqChannelFactory>();
+
+            services.Configure<OutboxOptions>(
+                configuration.GetRequiredSection("OutboxOptions"));
+            services.AddScoped<OutboxRepository>();
             services.AddHostedService<OutboxWorker>();
         }
 

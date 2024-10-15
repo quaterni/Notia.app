@@ -1,16 +1,21 @@
 using Grpc.Net.Client;
+using Microsoft.Extensions.Options;
 using Np.NotesService.Application.Relations.Service;
 
 namespace Np.NotesService.Infrastructure.Messaging.Grpc;
 
-public class GrpcRelationsService : IRelationsService
+internal class GrpcRelationsService : IRelationsService
 {
-    const string _address = "http://relations:8082";
+    private readonly GrpcOptions _grpcOptions;
+
+    public GrpcRelationsService(IOptionsSnapshot<GrpcOptions> options)
+    {
+        _grpcOptions = options.Get(GrpcOptions.Relations);
+    }
 
     public async Task<IEnumerable<NoteResponse>> GetNotesFromRoot(CancellationToken cancellationToken)
     {
-        // TODO: Add options
-        using var channel = GrpcChannel.ForAddress(_address);
+        using var channel = GrpcChannel.ForAddress(_grpcOptions.Address);
         var client = new RelationsService.RelationsServiceClient(channel);
 
         var response = await client.GetNotesFromRootAsync(new GetNotesFromRootRequest(), cancellationToken: cancellationToken);
@@ -21,7 +26,7 @@ public class GrpcRelationsService : IRelationsService
 
     public async Task<IEnumerable<RelationResponse>> GetOutgoingRelations(Guid noteId, CancellationToken cancellationToken)
     {
-        using var channel = GrpcChannel.ForAddress(_address);
+        using var channel = GrpcChannel.ForAddress(_grpcOptions.Address);
         var client = new RelationsService.RelationsServiceClient(channel);
 
         var rawResponse = await client.GetOutgoingRelationsAsync(
@@ -45,7 +50,7 @@ public class GrpcRelationsService : IRelationsService
 
     public async Task<IEnumerable<RelationResponse>> GetIncomingRelations(Guid noteId, CancellationToken cancellationToken)
     {
-        using var channel = GrpcChannel.ForAddress(_address);
+        using var channel = GrpcChannel.ForAddress(_grpcOptions.Address);
         var client = new RelationsService.RelationsServiceClient(channel);
 
         var rawResponse = await client.GetIncomingRelationsAsync(
