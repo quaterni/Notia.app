@@ -15,10 +15,10 @@ internal partial class LoggingBehavoir<TRequest, TResponse> : IPipelineBehavior<
     [LoggerMessage(Level = LogLevel.Information, Message = "Request processed successfully {RequestName}")]
     static partial void LogSuccessMessage(ILogger logger, string requestName);
 
-    [LoggerMessage(Level = LogLevel.Error, Message = "Request processed with error {RequestName}\n Error message: {Message}")]
+    [LoggerMessage(Level = LogLevel.Error, Message = "Request processed with error {RequestName}\nError message: {Message}")]
     static partial void LogErrorMessage(ILogger logger, string requestName, string message);
 
-    [LoggerMessage(Level = LogLevel.Error, Message = "Request processed failed {RequestName}\n Exception message: {Message}")]
+    [LoggerMessage(Level = LogLevel.Error, Message = "Request processed failed {RequestName}\nException message: {Message}")]
     static partial void LogFailMessage(ILogger logger, string requestName, string message);
 
     private readonly ILogger<LoggingBehavoir<TRequest, TResponse>> _logger;

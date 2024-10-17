@@ -31,7 +31,7 @@ public class GetNotesFromRootQueryHandler : IQueryHandler<GetNotesFromRootQuery,
         }
         catch(Exception e)
         {
-            throw new ServiceRequestException("Exception has thrown form relations service", e);
+            throw new ServiceRequestException("Exception has thrown from relations service", e);
         }
 
         if(!relationsResponse.Any())
