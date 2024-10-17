@@ -24,6 +24,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.SeedDataIfEmpty();
 }
+
+app.UseCustomExceptionHandler();
+
 app.UseAuthorization();
 
 app.MapControllers();
