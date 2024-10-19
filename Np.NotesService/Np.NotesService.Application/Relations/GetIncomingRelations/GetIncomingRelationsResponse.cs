@@ -1,5 +1,5 @@
 ﻿
-using Np.NotesService.Application.Relations.Shared;
+using Np.NotesService.Application.Dtos;
 
 namespace Np.NotesService.Application.Relations.GetIncomingRelations;
 

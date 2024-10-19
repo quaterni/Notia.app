@@ -1,12 +1,12 @@
-﻿
+﻿ 
 using Dapper;
 using Np.NotesService.Application.Abstractions.Data;
 using Np.NotesService.Application.Abstractions.Mediator;
 using Np.NotesService.Application.Exceptions;
 using Np.NotesService.Application.Relations.Service;
-using Np.NotesService.Application.Relations.Shared;
-using Np.NotesService.Application.Shared;
+using Np.NotesService.Application.Dtos;
 using Np.NotesService.Domain.Abstractions;
+using Np.NotesService.Domain.Notes;
 
 namespace Np.NotesService.Application.Relations.GetIncomingRelations;
 
@@ -23,10 +23,16 @@ internal class GetIncomingRelationsQueryHandler : IQueryHandler<GetIncomingRelat
 
     public async Task<Result<GetIncomingRelationsResponse>> Handle(GetIncomingRelationsQuery request, CancellationToken cancellationToken)
     {
+        var noteId = request.NoteId;
+        if(!await IsNoteContains(request.NoteId, cancellationToken))
+        {
+            return Result.Failure<GetIncomingRelationsResponse>(NoteErrors.NotFound);
+        }
+
         IEnumerable<RelationResponse> rawRelations;
         try
         {
-            rawRelations = await _relationsService.GetIncomingRelations(request.NoteId, cancellationToken);
+            rawRelations = await _relationsService.GetIncomingRelations(noteId, cancellationToken);
         }
         catch (Exception ex) 
         {
@@ -37,9 +43,16 @@ internal class GetIncomingRelationsQueryHandler : IQueryHandler<GetIncomingRelat
             return new GetIncomingRelationsResponse(new List<RelationItem>());
         }
 
-        var relations = await MapRawDataToRelations(request.NoteId, rawRelations);
+        var relations = await MapRawDataToRelations(noteId, rawRelations);
 
         return new GetIncomingRelationsResponse(relations);
+    }
+
+    private async Task<bool> IsNoteContains(Guid incomingNoteId, CancellationToken cancellationToken)
+    {
+        using var connection = _sqlConnectionFactory.CreateConnection();
+
+        return (await connection.QueryAsync("SELECT * FROM notes WHERE id=@Id", new {Id = incomingNoteId})).Any();
     }
 
     private async Task<IEnumerable<RelationItem>> MapRawDataToRelations(Guid incomingNoteId, IEnumerable<RelationResponse> rawRelations)
@@ -49,7 +62,7 @@ internal class GetIncomingRelationsQueryHandler : IQueryHandler<GetIncomingRelat
         var rawIncomingNote = await connection.QueryFirstAsync(
             "SELECT title, id FROM notes WHERE id=@Id", 
             new {Id=incomingNoteId});
-        var incomingNote = new NoteItem(rawIncomingNote.title, rawIncomingNote.id);
+        var incomingNote = new NoteItemDto(rawIncomingNote.title, rawIncomingNote.id);
 
         var rawOutgoingNotes = await connection.QueryAsync(
             "SELECT title, id FROM notes WHERE id=ANY(@Ids)", 
@@ -60,7 +73,7 @@ internal class GetIncomingRelationsQueryHandler : IQueryHandler<GetIncomingRelat
 
         foreach(var rawOutgoingNote in rawOutgoingNotes)
         {
-            var outgoingNote = new NoteItem(
+            var outgoingNote = new NoteItemDto(
                 rawOutgoingNote.title,
                 rawOutgoingNote.id);
             var relationId = rawRelationsDictionary[outgoingNote.Id].Id;

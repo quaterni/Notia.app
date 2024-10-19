@@ -1,7 +1,7 @@
 ﻿
-namespace Np.NotesService.Application.Notes.GetNote
+namespace Np.NotesService.Domain.Notes
 {
-    public static class Errors
+    public static class NoteErrors
     {
         public static string NotFound => "[GetNote]: Note not found";
     }

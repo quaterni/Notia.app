@@ -2,11 +2,7 @@
 using Np.NotesService.Application.Abstractions.Data;
 using Np.NotesService.Application.Abstractions.Mediator;
 using Np.NotesService.Domain.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Np.NotesService.Domain.Notes;
 
 namespace Np.NotesService.Application.Notes.GetNote
 {
@@ -28,7 +24,7 @@ namespace Np.NotesService.Application.Notes.GetNote
 
             if (result == null)
             {
-                return Result.Failure<GetNoteResponse>(Errors.NotFound);
+                return Result.Failure<GetNoteResponse>(NoteErrors.NotFound);
             }
 
             var note = new GetNoteResponse

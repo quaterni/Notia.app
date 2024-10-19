@@ -3,7 +3,7 @@ using Dapper;
 using Np.NotesService.Application.Abstractions.Data;
 using Np.NotesService.Application.Abstractions.Mediator;
 using Np.NotesService.Application.Exceptions;
-using Np.NotesService.Application.Shared;
+using Np.NotesService.Application.Dtos;
 using Np.NotesService.Domain.Abstractions;
 using Np.NotesService.Application.Relations.Service;
 
@@ -36,13 +36,13 @@ public class GetNotesFromRootQueryHandler : IQueryHandler<GetNotesFromRootQuery,
 
         if(!relationsResponse.Any())
         {
-            return new GetNotesFromRootResponse(new List<NoteItem>());
+            return new GetNotesFromRootResponse(new List<NoteItemDto>());
         }
 
         var ids = relationsResponse.Select(r=> r.NoteId).ToArray();
         using var connection = _sqlConnectionFactory.CreateConnection();
         var dbResponse = await connection.QueryAsync("SELECT title, id FROM notes WHERE id =ANY(@Ids)", new {Ids = ids.ToArray()});
-        var noteResponses = dbResponse.Select(r=> new NoteItem(r.title, r.id));
+        var noteResponses = dbResponse.Select(r=> new NoteItemDto(r.title, r.id));
 
         return new GetNotesFromRootResponse(noteResponses);
     }

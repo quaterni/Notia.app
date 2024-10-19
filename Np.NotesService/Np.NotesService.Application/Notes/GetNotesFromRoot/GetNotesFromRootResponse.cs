@@ -1,5 +1,5 @@
-using Np.NotesService.Application.Shared;
+using Np.NotesService.Application.Dtos;
 
 namespace Np.NotesService.Application.Notes.GetNotesFromRoot;
 
-public sealed record GetNotesFromRootResponse(IEnumerable<NoteItem> Notes);
+public sealed record GetNotesFromRootResponse(IEnumerable<NoteItemDto> Notes);

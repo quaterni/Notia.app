@@ -4,9 +4,11 @@ using Np.NotesService.Application.Abstractions.Data;
 using Np.NotesService.Application.Abstractions.Mediator;
 using Np.NotesService.Application.Exceptions;
 using Np.NotesService.Application.Relations.Service;
-using Np.NotesService.Application.Relations.Shared;
-using Np.NotesService.Application.Shared;
+using Np.NotesService.Application.Dtos;
 using Np.NotesService.Domain.Abstractions;
+using Np.NotesService.Application.Dtos;
+using Np.NotesService.Application.Relations.GetIncomingRelations;
+using Np.NotesService.Domain.Notes;
 
 namespace Np.NotesService.Application.Relations.GetOutgoingRelations;
 
@@ -23,6 +25,12 @@ internal class GetOutgoingRelationsQueryHandler : IQueryHandler<GetOutgoingRelat
 
     public async Task<Result<GetOutgoingRelationsResponse>> Handle(GetOutgoingRelationsQuery request, CancellationToken cancellationToken)
     {
+        var noteId = request.NoteId;
+        if (!await IsNoteContains(request.NoteId, cancellationToken))
+        {
+            return Result.Failure<GetOutgoingRelationsResponse>(NoteErrors.NotFound);
+        }
+
         var outgoingNoteId = request.NoteId;
         IEnumerable<RelationResponse> rawRelations;
         try
@@ -43,6 +51,14 @@ internal class GetOutgoingRelationsQueryHandler : IQueryHandler<GetOutgoingRelat
         return new GetOutgoingRelationsResponse(relations);
     }
 
+
+    private async Task<bool> IsNoteContains(Guid incomingNoteId, CancellationToken cancellationToken)
+    {
+        using var connection = _sqlConnectionFactory.CreateConnection();
+
+        return (await connection.QueryAsync("SELECT * FROM notes WHERE id=@Id", new { Id = incomingNoteId })).Any();
+    }
+
     private async Task<IEnumerable<RelationItem>> GetDataToRelationItems(Guid outgoingNoteId, IEnumerable<RelationResponse> rawRelations)
     {
         using var connection = _sqlConnectionFactory.CreateConnection();
@@ -51,7 +67,7 @@ internal class GetOutgoingRelationsQueryHandler : IQueryHandler<GetOutgoingRelat
 
         var dbOutgoingNoteResponse = await connection.QueryFirstAsync(
             "SELECT title, id FROM notes WHERE id=@Id", new { Id = outgoingNoteId });
-        var outgoingNote = new NoteItem(
+        var outgoingNote = new NoteItemDto(
             dbOutgoingNoteResponse.title,
             dbOutgoingNoteResponse.id);
 
@@ -65,7 +81,7 @@ internal class GetOutgoingRelationsQueryHandler : IQueryHandler<GetOutgoingRelat
         {
             var rawRelation = responseDictionary[(Guid)dynamicIncomingNote.id];
 
-            var incomingNote = new NoteItem(
+            var incomingNote = new NoteItemDto(
                 dynamicIncomingNote.title,
                 dynamicIncomingNote.id);
 
