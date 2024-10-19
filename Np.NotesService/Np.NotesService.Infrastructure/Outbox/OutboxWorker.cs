@@ -24,7 +24,7 @@ internal partial class OutboxWorker : BackgroundService
     [LoggerMessage(Level = LogLevel.Information, Message = "Checking outbox entries")]
     static partial void LogCheckEntries(ILogger logger);
 
-    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox entries are empty")]
+    [LoggerMessage(Level = LogLevel.Trace, Message = "Outbox entries are empty")]
     static partial void LogEmptyEntries(ILogger logger);
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker take {Amount} entries")]
