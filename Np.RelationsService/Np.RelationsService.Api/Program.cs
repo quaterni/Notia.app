@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Np.RelationsService.Api.Extensions;
+using Np.RelationsService.Api.Middlewares;
 using Np.RelationsService.Application;
 using Np.RelationsService.Infrastructure;
 
@@ -29,7 +30,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<ExceptionHandlerMiddleware>();
+app.UseMiddleware<CustomExceptionHandlingMiddleware>();
 
 app.UseAuthorization();
 

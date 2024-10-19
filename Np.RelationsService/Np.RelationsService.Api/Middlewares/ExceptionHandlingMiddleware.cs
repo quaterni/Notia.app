@@ -2,15 +2,15 @@
 
 namespace Np.RelationsService.Api.Middlewares;
 
-public partial class ExceptionHandlingMiddleware
+public partial class CustomExceptionHandlingMiddleware
 {
     [LoggerMessage(Level = LogLevel.Error, Message ="Request executed with exception: {ExceptionMessage}")]
     private static partial void LogErrorReqeust(ILogger logger, string exceptionMessage);
 
     private readonly RequestDelegate _requestDelegate;
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+    private readonly ILogger<CustomExceptionHandlingMiddleware> _logger;
 
-    public ExceptionHandlingMiddleware(RequestDelegate requestDelegate, ILogger<ExceptionHandlingMiddleware> logger)
+    public CustomExceptionHandlingMiddleware(RequestDelegate requestDelegate, ILogger<CustomExceptionHandlingMiddleware> logger)
     {
         _requestDelegate = requestDelegate;
         _logger = logger;
