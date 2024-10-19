@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Np.RelationsService.Api.Extensions;
 using Np.RelationsService.Application;
@@ -16,6 +17,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicaton();
 
 
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -24,7 +26,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseAuthorization();
 
