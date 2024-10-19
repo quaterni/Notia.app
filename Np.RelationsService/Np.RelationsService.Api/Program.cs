@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Np.RelationsService.Api.Extensions;
 using Np.RelationsService.Api.Middlewares;
 using Np.RelationsService.Application;
 using Np.RelationsService.Infrastructure;
@@ -17,8 +15,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicaton();
 
-
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -26,9 +22,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
-app.UseHttpsRedirection();
 
 app.UseMiddleware<CustomExceptionHandlingMiddleware>();
 
