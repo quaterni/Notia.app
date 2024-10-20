@@ -13,6 +13,9 @@ namespace Np.RelationsService.Infrastructure.Outbox;
 
 internal partial class OutboxWorker : BackgroundService
 {
+    [LoggerMessage(Level = LogLevel.Trace, Message = "Outbox worker started")]
+    private static partial void LogStart(ILogger logger);
+
     [LoggerMessage(Level =LogLevel.Trace, Message ="Outboxes are empty")]
     private static partial void LogEmptyOutboxes(ILogger logger);
 
@@ -102,6 +105,7 @@ internal partial class OutboxWorker : BackgroundService
     {
         _channel = _rabbitMqChannelFactory.Create();
 
+        LogStart(_logger);
         return base.StartAsync(cancellationToken);
     }
 
