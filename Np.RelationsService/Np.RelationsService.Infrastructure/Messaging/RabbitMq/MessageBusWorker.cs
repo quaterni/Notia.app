@@ -2,8 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Np.RelationsService.Application.Abstractions.Messaging.Events;
+using Np.RelationsService.Infrastructure.Messaging.RabbitMq.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -25,6 +27,7 @@ internal partial class MessageBusWorker : BackgroundService
     private static partial void LogAckedMessage(ILogger logger, ulong deliveryTag);
 
     private readonly RabbitMqChannelFactory _rabbitMqChannelFactory;
+    private readonly QueueOptions _queueOptions;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<MessageBusWorker> _logger;
     private IModel? _channel;
@@ -33,8 +36,10 @@ internal partial class MessageBusWorker : BackgroundService
     public MessageBusWorker(
         RabbitMqChannelFactory rabbitMqChannelFactory,
         IServiceProvider serviceProvider,
-        ILogger<MessageBusWorker> logger)
+        ILogger<MessageBusWorker> logger,
+        IOptions<QueueOptions> options)
     {
+        _queueOptions = options.Value;
         _rabbitMqChannelFactory = rabbitMqChannelFactory;
         _serviceProvider = serviceProvider;
         _logger = logger;
@@ -49,24 +54,16 @@ internal partial class MessageBusWorker : BackgroundService
     {
         _channel = _rabbitMqChannelFactory.Create();
 
-        var workingQueueName = _channel.QueueDeclare().QueueName;
-
-        _channel.QueueBind(
-            workingQueueName,
-            exchange: "events",
-            routingKey: string.Empty,
-            arguments: null);
-
         _consumer = new EventingBasicConsumer(_channel);
 
         _consumer.Received += Consumer_Received;
 
         _channel.BasicConsume(
-            workingQueueName,
+            _queueOptions.Name,
             autoAck: false,
             _consumer);
 
-        LogConsumingQueue(_logger, workingQueueName);
+        LogConsumingQueue(_logger, _queueOptions.Name);
 
         return base.StartAsync(cancellationToken);
     }

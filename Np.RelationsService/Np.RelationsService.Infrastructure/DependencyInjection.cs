@@ -10,6 +10,7 @@ using Np.RelationsService.Domain.Relations;
 using Np.RelationsService.Domain.RootEntries;
 using Np.RelationsService.Infrastructure.Data;
 using Np.RelationsService.Infrastructure.Messaging.RabbitMq;
+using Np.RelationsService.Infrastructure.Messaging.RabbitMq.Options;
 using Np.RelationsService.Infrastructure.Outbox;
 using Np.RelationsService.Infrastructure.Repositories;
 
@@ -22,13 +23,17 @@ namespace Np.RelationsService.Infrastructure
 
             AddPersistance(services, configuration);
 
-            AddMessaging(services);
+            AddMessaging(services, configuration);
 
             return services;
         }
 
-        private static void AddMessaging(IServiceCollection services)
+        private static void AddMessaging(IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<ConnectionOptions>(configuration.GetSection("RabbitMq:Connection"));
+            services.Configure<QueueOptions>(configuration.GetSection("RabbitMq:Queue"));
+            services.Configure<ExchangeOptions>(configuration.GetSection("RabbitMq:Exchange"));
+
             services.AddGrpc();
 
             services.AddScoped<OutboxRepository>();
