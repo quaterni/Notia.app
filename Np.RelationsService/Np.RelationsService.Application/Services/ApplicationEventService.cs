@@ -1,5 +1,6 @@
 ﻿
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Np.RelationsService.Application.Abstractions.Messaging.Events;
 using Np.RelationsService.Application.Notes.ApplicationEvents.NoteRemoved;
@@ -9,13 +10,23 @@ using Np.RelationsService.Application.Relations.ApplicationEvents.RelationRemove
 
 namespace Np.RelationsService.Application.Services;
 
-public class ApplicationEventService : IEventProcessor
+public partial class ApplicationEventService : IEventProcessor
 {
-    private readonly IPublisher _publisher;
+    [LoggerMessage(Level =LogLevel.Information, Message ="Published event: {EventName}")]
+    private static partial void LogEventPublished(ILogger logger, string eventName);
 
-    public ApplicationEventService(IPublisher publisher)
+    [LoggerMessage(Level = LogLevel.Information, Message = "Accepted unknown event: {EventName}")]
+    private static partial void LogUnknownEvent(ILogger logger, string eventName);
+
+    private readonly IPublisher _publisher;
+    private readonly ILogger<ApplicationEventService> _logger;
+
+    public ApplicationEventService(
+        IPublisher publisher,
+        ILogger<ApplicationEventService> logger)
     {
         _publisher = publisher;
+        _logger = logger;
     }
 
     public async Task Process(MessageBusEvent eventMessage)
@@ -23,16 +34,23 @@ public class ApplicationEventService : IEventProcessor
         switch (eventMessage.EventName)
         {
             case "NoteCreatedEvent":
+                LogEventPublished(_logger, eventMessage.EventName);
                 await _publisher.Publish(SerializeEvent<NoteCreatedApplicationEvent>(eventMessage.Body));
                 break;
             case "NoteRemovedEvent":
+                LogEventPublished(_logger, eventMessage.EventName);
                 await _publisher.Publish(SerializeEvent<NoteRemovedApplicatonEvent>(eventMessage.Body));
                 break;
             case "RelationCreatedEvent":
+                LogEventPublished(_logger, eventMessage.EventName);
                 await _publisher.Publish(SerializeEvent<RelationCreatedApplicationEvent>(eventMessage.Body));
                 break;
             case "RelationRemovedEvent":
+                LogEventPublished(_logger, eventMessage.EventName);
                 await _publisher.Publish(SerializeEvent<RelationRemovedApplicationEvent>(eventMessage.Body));
+                break;
+            default:
+                LogUnknownEvent(_logger, eventMessage.EventName);
                 break;
         }
     }
