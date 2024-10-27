@@ -1,10 +1,15 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.EntityFrameworkCore;
+using Np.UsersService.Core.Data;
 
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<ApplicationDbContext>(
+    opt=> opt.UseNpgsql(builder.Configuration.GetConnectionString("UsersDb")));
 
 var app = builder.Build();
 
