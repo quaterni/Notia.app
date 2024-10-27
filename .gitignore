@@ -7,9 +7,8 @@ bin/
 obj/
 .sql-scripts/
 appsettings.Development.json
+appsettings.Production.json
 Deployment/compose-data
-/Np.NotesService/Np.NotesService.Api/appsettings.Production.json
-/Np.NotesService/Np.NotesService.Api/Np.NotesService.Api.csproj.user
-/Np.RelationsService/Np.RelationsService.Api/appsettings.Production.json
-/Np.RelationsService/Np.RelationsService.Api/Np.RelationsService.Api.csproj.user
-/Np.RelationsService/Np.RelationsService.Api/Np.RelationsService.Api.http
+
+*.user
+*.http
