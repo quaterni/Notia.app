@@ -14,8 +14,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasAlternateKey(u => u.IdentityId);
 
         builder.HasIndex(u=> u.Username).IsUnique();
+        builder.HasIndex(u=> u.Email).IsUnique();
 
         builder.Property(u=> u.Username).IsRequired();
+        builder.Property(u=> u.Email).IsRequired();
         builder.Property(u=> u.Id);
         builder.Property(u=> u.IdentityId);
     }
