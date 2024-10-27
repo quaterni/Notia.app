@@ -15,7 +15,7 @@ public class User
         IdentityId = identityId;
     }
 
-    [Required]
+    [Required]   
     [MinLength(3)]
     public required string Username { get; set; }
 
