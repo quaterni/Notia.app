@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Np.UsersService.Core.Authentication.Keycloak;
 using Np.UsersService.Core.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     opt=> opt.UseNpgsql(builder.Configuration.GetConnectionString("UsersDb")));
+
+builder.Services.AddKeycloakAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
