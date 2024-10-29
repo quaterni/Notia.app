@@ -32,6 +32,13 @@ public class KeycloakIdentityService : IIdentityService
         return ExtreactIdentityIdFromHttpResponse(response);
     }
 
+    public async Task RemoveUserAsync(string identityId, CancellationToken cancellationToken)
+    {
+        var url = new Uri($"{_identityClientOptions.RealmUsersManagementUrl}/{identityId}");
+
+        await _httpClient.DeleteAsync(url, cancellationToken);
+    }
+
     private UserRepresentation CreateUserRepresentation(CreateUserRequest createUserRequest)
     {
         var _userCreationOptions = _identityClientOptions.RealmUserCreationOptions;
@@ -74,4 +81,6 @@ public class KeycloakIdentityService : IIdentityService
 
         return userIdentityId;
     }
+
+
 }
