@@ -30,5 +30,9 @@ public static class DependencyInjection
 
         services.AddHttpClient<IIdentityService, KeycloakIdentityService>()
             .AddHttpMessageHandler<KeycloakIdentityDelegatingHandler>();
+
+        services.Configure<AuthClientOptions>(configuration.GetSection("Keycloak:AuthClient"));
+
+        services.AddHttpClient<ITokenService, KeycloakTokenService>();
     }
 }
