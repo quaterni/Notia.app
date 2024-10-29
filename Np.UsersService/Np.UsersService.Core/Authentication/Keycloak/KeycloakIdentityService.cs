@@ -39,6 +39,20 @@ public class KeycloakIdentityService : IIdentityService
         await _httpClient.DeleteAsync(url, cancellationToken);
     }
 
+    public async Task<UserView?> GetUserAsync(string identityId, CancellationToken cancellationToken)
+    {
+        var url = new Uri($"{_identityClientOptions.RealmUsersManagementUrl}/{identityId}");
+
+        var response = await _httpClient.GetAsync(url, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        return await response.Content.ReadFromJsonAsync<UserView>();
+    }
+
     private UserRepresentation CreateUserRepresentation(CreateUserRequest createUserRequest)
     {
         var _userCreationOptions = _identityClientOptions.RealmUserCreationOptions;
@@ -81,6 +95,5 @@ public class KeycloakIdentityService : IIdentityService
 
         return userIdentityId;
     }
-
 
 }
