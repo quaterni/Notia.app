@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Np.UsersService.Core.Authentication.Keycloak;
 using Np.UsersService.Core.Data;
+using Np.UsersService.Core.Messaging.Outbox;
+using Np.UsersService.Core.Messaging.RabbitMq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     opt=> opt.UseNpgsql(builder.Configuration.GetConnectionString("UsersDb")));
 
 builder.Services.AddKeycloakAuthentication(builder.Configuration);
+
+builder.Services.AddRabbitMqMessaging(builder.Configuration);
+
+builder.Services.AddOutboxEntries(builder.Configuration);
 
 var app = builder.Build();
 
