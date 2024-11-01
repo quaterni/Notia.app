@@ -12,6 +12,8 @@ public partial class RabbitMqChannelFactory: IDisposable
 
     private readonly ILogger<RabbitMqChannelFactory> _logger;
 
+    private bool _disposed;
+
     public RabbitMqChannelFactory(
         ILogger<RabbitMqChannelFactory> logger,
         IOptions<RabbitMqConnecitonOptions> options,
@@ -28,8 +30,12 @@ public partial class RabbitMqChannelFactory: IDisposable
             Port = connectionOptions.Port,
         }.CreateConnection();
         _logger = logger;
+
+        _connection.ConnectionShutdown += Connection_ConnectionShutdown;
+
         LogConnectionCreated(_logger);
     }
+
 
     public IModel CreateChannel()
     {
@@ -49,8 +55,11 @@ public partial class RabbitMqChannelFactory: IDisposable
 
     public void Dispose()
     {
+        if(_disposed)
+            return;
         _connection.Dispose();
         LogConnectionDisposed(_logger);
+        _disposed = true;
     }
 
     [LoggerMessage(Level = LogLevel.Information, Message ="RabbitMQ connection created")]
@@ -62,4 +71,13 @@ public partial class RabbitMqChannelFactory: IDisposable
 
     [LoggerMessage(Level = LogLevel.Information, Message = "RabbitMQ channel created {ChannelNumber}")]
     private static partial void LogChannelCreated(ILogger logger, int channelNumber);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "RabbitMQ connection was unexpectedly shutdown")]
+    private static partial void LogConnectionShutdown(ILogger logger);
+
+    private void Connection_ConnectionShutdown(object? sender, ShutdownEventArgs e)
+    {
+        LogConnectionShutdown(_logger);
+        Dispose();
+    }
 }
