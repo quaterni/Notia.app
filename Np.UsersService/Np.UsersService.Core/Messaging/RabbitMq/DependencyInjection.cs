@@ -8,7 +8,10 @@ public static class DependencyInjection
     {
         services.Configure<RabbitMqConnecitonOptions>(configuration.GetSection("RabbitMq:ConnectionOptions"));
         services.Configure<RabbitMqExchangeOptions>(configuration.GetSection("RabbitMq:ExchangeOptions"));
+        services.Configure<RabbitMqQueueOptions>(configuration.GetSection("RabbitMq:QueueOptions"));
 
         services.AddSingleton<RabbitMqChannelFactory>();
+
+        services.AddHostedService<RabbitMqQueueWorker>();
     }
 }
