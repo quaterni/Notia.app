@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Np.UsersService.Core.Data;
+using Np.UsersService.Core.Messaging.Models;
 using Np.UsersService.Core.Messaging.Outbox.Models;
 using Np.UsersService.Core.Messaging.Outbox.Options;
 using Np.UsersService.Core.Messaging.RabbitMq;
@@ -122,7 +123,7 @@ public partial class OutboxWorker : BackgroundService
 
     private void SendMessage(string name, string data, CancellationToken cancellationToken)
     {
-        var body = JsonConvert.SerializeObject(new { Name = name, Body = data });
+        var body = JsonConvert.SerializeObject(new MessageBusEvent(name, data));
         var exchangeOptions = _serviceProvider.GetRequiredService<IOptions<RabbitMqExchangeOptions>>().Value;
 
         _channel.BasicPublish(
