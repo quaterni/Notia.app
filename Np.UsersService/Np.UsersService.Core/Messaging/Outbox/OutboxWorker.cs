@@ -50,6 +50,7 @@ public partial class OutboxWorker : BackgroundService
             foreach (var entry in entries)
             {
                 LogStartProcessEntry(_logger, entry.Id);
+                await ProcessEntryAsync(entry, dbContext, stoppingToken);
             }
             await Task.Delay(TimeSpan.FromSeconds(_outboxOptions.CheckTimeoutInSeconds));
         }
