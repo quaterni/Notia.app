@@ -1,4 +1,5 @@
-﻿using Np.UsersService.Core.Messaging.Outbox.Options;
+﻿using Np.UsersService.Core.Messaging.ModelEvents.Abstractions;
+using Np.UsersService.Core.Messaging.Outbox.Options;
 
 namespace Np.UsersService.Core.Messaging.Outbox;
 
@@ -8,5 +9,6 @@ public static class DependencyInjection
     {
         services.Configure<OutboxOptions>(configuration.GetSection("OutboxOptions"));
         services.AddHostedService<OutboxWorker>();
+        services.AddScoped<IModelEventService, OutboxModelEventService>();
     }
 }
