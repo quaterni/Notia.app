@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Np.UsersService.Core.Messaging.Models;
 
-namespace Np.UsersService.Core.Messaging.ApplicationMessageHandlers;
+namespace Np.UsersService.Core.Messaging.MessageHandling;
 
 public partial class MessageHandler
 {
