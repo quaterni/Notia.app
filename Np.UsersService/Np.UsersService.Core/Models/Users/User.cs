@@ -8,20 +8,22 @@ public class User
     {
     }
 
-    public User(string username, Guid id, string identityId)
+    public User(string username, string email, Guid id)
     {
         Username = username;
         Id = id;
-        IdentityId = identityId;
+        Email = email;
     }
 
     [Required]   
     [MinLength(3)]
-    public required string Username { get; set; }
+    public string Username { get; set; } = string.Empty;
 
-    public required string Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
-    public required Guid Id { get; init; }
+    public Guid Id { get; init; }
 
-    public required string IdentityId { get; init; }
+    public string? IdentityId { get; set; }
+
+    public bool IsSyncrhonizedWithIdentity { get; set; }
 }

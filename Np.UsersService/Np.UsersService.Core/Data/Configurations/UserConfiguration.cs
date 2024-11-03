@@ -11,7 +11,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("users");
 
         builder.HasKey(u => u.Id);
-        builder.HasAlternateKey(u => u.IdentityId);
+        builder.HasIndex(u => u.IdentityId);
 
         builder.HasIndex(u=> u.Username).IsUnique();
         builder.HasIndex(u=> u.Email).IsUnique();
@@ -20,5 +20,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u=> u.Email).IsRequired();
         builder.Property(u=> u.Id);
         builder.Property(u=> u.IdentityId);
+        builder.Property(u=> u.IsSyncrhonizedWithIdentity);
     }
 }

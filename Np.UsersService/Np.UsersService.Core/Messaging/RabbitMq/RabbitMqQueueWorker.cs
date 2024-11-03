@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Np.UsersService.Core.Messaging.ApplicationMessageHandlers;
+using Np.UsersService.Core.Messaging.MessageHandling;
 using Np.UsersService.Core.Messaging.Models;
 using Np.UsersService.Core.Messaging.RabbitMq.Options;
 using RabbitMQ.Client;
@@ -16,6 +16,7 @@ public partial class RabbitMqQueueWorker : BackgroundService
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<RabbitMqQueueWorker> _logger;
     private IModel? _channel;
+    private EventingBasicConsumer? _consumer;
 
     public RabbitMqQueueWorker(IServiceProvider serviceProvider, ILogger<RabbitMqQueueWorker> logger)
     {
@@ -45,14 +46,14 @@ public partial class RabbitMqQueueWorker : BackgroundService
 
         _channel.QueueBind(queueOptions.QueueName, queueOptions.ExchangeName, routingKey: string.Empty, arguments: null);
 
-        var consumer = new EventingBasicConsumer(_channel);
+        _consumer = new EventingBasicConsumer(_channel);
 
-        consumer.Received += Consumer_Received;
+        _consumer.Received += Consumer_Received;
 
         _channel.BasicConsume(
             queueOptions.QueueName,
             autoAck: false,
-            consumer);
+            _consumer);
 
         LogWorkerStarted(_logger);
 
@@ -63,6 +64,7 @@ public partial class RabbitMqQueueWorker : BackgroundService
     public override Task StopAsync(CancellationToken cancellationToken)
     {
         _channel?.Dispose();
+        _consumer!.Received -= Consumer_Received;
         LogWorkerStopped(_logger);
         return base.StopAsync(cancellationToken);
     }
@@ -77,6 +79,9 @@ public partial class RabbitMqQueueWorker : BackgroundService
     [LoggerMessage(Level = LogLevel.Information, Message = "RabbitMqQueueWorker receive message: {DeliveryTag}")]
     private static partial void LogMessageReceived(ILogger logger, ulong deliveryTag);
 
+    [LoggerMessage(Level = LogLevel.Information, Message = "RabbitMqQueueWorker acked message: {DeliveryTag}")]
+    private static partial void LogAckedMessage(ILogger logger, ulong deliveryTag);
+
     private async void Consumer_Received(object? sender, BasicDeliverEventArgs e)
     {
         LogMessageReceived(_logger, e.DeliveryTag);
@@ -86,6 +91,9 @@ public partial class RabbitMqQueueWorker : BackgroundService
         var message = DeserializeMessage(e.Body.ToArray());
 
         await messageHandler.Handle(message);
+
+        _channel!.BasicAck(e.DeliveryTag, false);
+        LogAckedMessage(_logger, e.DeliveryTag);
     }
 
     private MessageBusEvent DeserializeMessage(byte[] body)

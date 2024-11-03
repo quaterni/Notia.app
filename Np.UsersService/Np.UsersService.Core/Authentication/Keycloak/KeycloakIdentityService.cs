@@ -3,6 +3,8 @@ using Np.UsersService.Core.Authentication.Abstractions;
 using Np.UsersService.Core.Authentication.Keycloak.Options;
 using Np.UsersService.Core.Authentication.Keycloak.Models;
 using Np.UsersService.Core.Dtos.Users;
+using Np.UsersService.Core.Shared;
+using Np.UsersService.Core.Authentication.Errors;
 
 namespace Np.UsersService.Core.Authentication.Keycloak;
 
@@ -20,7 +22,7 @@ public class KeycloakIdentityService : IIdentityService
         _identityClientOptions = options.Value;
     }
 
-    public async Task<string> CreateUserAsync(CreateUserRequest createUserRequest, CancellationToken cancellationToken)
+    public async Task<Result<string>> CreateUserAsync(CreateUserRequest createUserRequest, CancellationToken cancellationToken = default)
     {
         var userRepresentation = CreateUserRepresentation(createUserRequest);
 
@@ -29,17 +31,22 @@ public class KeycloakIdentityService : IIdentityService
             userRepresentation, 
             cancellationToken);
 
+        if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
+        {
+            return Result.Failure<string>(IdentityErrors.UserExists);
+        }
+
         return ExtreactIdentityIdFromHttpResponse(response);
     }
 
-    public async Task RemoveUserAsync(string identityId, CancellationToken cancellationToken)
+    public async Task RemoveUserAsync(string identityId, CancellationToken cancellationToken = default)
     {
         var url = new Uri($"{_identityClientOptions.RealmUsersManagementUrl}/{identityId}");
 
         await _httpClient.DeleteAsync(url, cancellationToken);
     }
 
-    public async Task<UserView?> GetUserAsync(string identityId, CancellationToken cancellationToken)
+    public async Task<UserView?> GetUserByIdAsync(string identityId, CancellationToken cancellationToken = default)
     {
         var url = new Uri($"{_identityClientOptions.RealmUsersManagementUrl}/{identityId}");
 
@@ -51,6 +58,27 @@ public class KeycloakIdentityService : IIdentityService
         }
 
         return await response.Content.ReadFromJsonAsync<UserView>();
+    }
+
+
+    public async Task<Result<UserView>> GetUserByCredentialsAsync(string username, string email, CancellationToken cancellationToken=default)
+    {
+        var url = new Uri($"{_identityClientOptions.RealmUsersManagementUrl}?username={username}&email={email}");
+
+        var response = await _httpClient.GetAsync(url, cancellationToken);
+
+        response.EnsureSuccessStatusCode();
+
+        var user = response.Content.ReadFromJsonAsAsyncEnumerable<UserView>()
+            .ToBlockingEnumerable()
+            .SingleOrDefault();
+
+        if(user == null)
+        {
+            return Result.Failure<UserView>(IdentityErrors.UserNotFound);
+        }
+
+        return user;
     }
 
     private UserRepresentation CreateUserRepresentation(CreateUserRequest createUserRequest)
