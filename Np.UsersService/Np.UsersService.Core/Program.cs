@@ -5,6 +5,7 @@ using Np.UsersService.Core.Data;
 using Np.UsersService.Core.Messaging.MessageHandling;
 using Np.UsersService.Core.Messaging.Outbox;
 using Np.UsersService.Core.Messaging.RabbitMq;
+using Np.UsersService.Core.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,10 +35,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<CustomExceptionMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();
