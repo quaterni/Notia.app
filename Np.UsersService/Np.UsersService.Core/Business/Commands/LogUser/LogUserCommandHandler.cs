@@ -7,16 +7,16 @@ using Np.UsersService.Core.Shared;
 
 namespace Np.UsersService.Core.Business.Commands.LogUser;
 
-public class LogUserReqeustHandler : ICommandHandler<LogUserRequest, LogUserResponse>
+public class LogUserCommandHandler : ICommandHandler<LogUserCommand, LogUserResponse>
 {
     private readonly ITokenService _tokenService;
 
-    public LogUserReqeustHandler(ITokenService tokenService)
+    public LogUserCommandHandler(ITokenService tokenService)
     {
         _tokenService = tokenService;
     }
 
-    public async Task<Result<LogUserResponse>> Handle(LogUserRequest request, CancellationToken cancellationToken)
+    public async Task<Result<LogUserResponse>> Handle(LogUserCommand request, CancellationToken cancellationToken)
     {
         var result = await _tokenService.GetTokenByUserCredentials(new UserCredentials(request.Username, request.Password));
 
