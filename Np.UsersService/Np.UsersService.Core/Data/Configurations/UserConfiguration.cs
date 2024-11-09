@@ -21,5 +21,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u=> u.Id);
         builder.Property(u=> u.IdentityId);
         builder.Property(u=> u.IsSyncrhonizedWithIdentity);
+
+        builder.Property<uint>("Version")
+            .IsRowVersion();
     }
 }

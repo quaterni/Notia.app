@@ -56,7 +56,15 @@ public partial class AddUserToIdentityEventHandler : INotificationHandler<UserCr
         user.IsSyncrhonizedWithIdentity = true;
 
         _dbContext.Update(user);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch(DbUpdateConcurrencyException ex)
+        {
+            throw new ConcurrentException(ex);
+        }
+
         LogUserSyncronized(_logger, user.Id);
     }
 
