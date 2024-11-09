@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Np.UsersService.Core.Business.Abstractions;
 using Np.UsersService.Core.Data;
+using Np.UsersService.Core.Exceptions;
 using Np.UsersService.Core.Messaging.ModelEvents.Abstractions;
 using Np.UsersService.Core.Messaging.ModelEvents.Users;
 using Np.UsersService.Core.Models.Users;
@@ -44,8 +45,14 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand>
                 user.Email, 
                 request.Password, 
                 user.Id));
-
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch(DbUpdateConcurrencyException ex)
+        {
+            throw new ConcurrentException(ex);
+        }
 
         return Result.Success();
     }
