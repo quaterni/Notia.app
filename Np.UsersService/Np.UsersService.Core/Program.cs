@@ -15,7 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(
-    opt=> opt.UseNpgsql(builder.Configuration.GetConnectionString("UsersDb")));
+    opt=> opt.UseNpgsql(builder.Configuration.GetConnectionString("UsersDb"))
+             .UseSnakeCaseNamingConvention());
 
 builder.Services.AddKeycloakAuthentication(builder.Configuration);
 
