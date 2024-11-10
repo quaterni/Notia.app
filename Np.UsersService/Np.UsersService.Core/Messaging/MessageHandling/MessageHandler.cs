@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Newtonsoft.Json;
 using Np.UsersService.Core.Messaging.MessageHandling.Users.UserCreatedSecure;
+using Np.UsersService.Core.Messaging.MessageHandling.Users.UserUpdatedSecure;
 using Np.UsersService.Core.Messaging.ModelEvents.Users;
 using Np.UsersService.Core.Messaging.Models;
 
@@ -24,10 +25,19 @@ public partial class MessageHandler
         switch (message.EventName)
         {
             case nameof(UserCreatedSecureEvent):
-                var e = DeserializeEvent<UserCreatedSecureApplicationEvent>(message.Body);
-                LogPublishEvent(_logger, e.GetType().Name); ;
-                await _publisher.Publish(e);
-                break;
+                {
+                    var e = DeserializeEvent<UserCreatedSecureApplicationEvent>(message.Body);
+                    LogPublishEvent(_logger, e.GetType().Name); ;
+                    await _publisher.Publish(e);
+                    break;
+                }
+            case nameof(UserUpdatedSecureEvent):
+                {
+                    var e = DeserializeEvent<UserUpdatedSecureApplicationEvent>(message.Body);
+                    LogPublishEvent(_logger, e.GetType().Name); ;
+                    await _publisher.Publish(e);
+                    break;
+                }
             default:
                 LogUnknownEvent(_logger, message.EventName);
                 break;

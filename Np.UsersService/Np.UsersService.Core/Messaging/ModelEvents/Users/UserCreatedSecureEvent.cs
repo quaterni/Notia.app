@@ -1,5 +1,4 @@
-﻿using Np.UsersService.Core.Messaging.MessageHandling;
-using Np.UsersService.Core.Messaging.ModelEvents.Abstractions;
+﻿using Np.UsersService.Core.Messaging.ModelEvents.Abstractions;
 
 namespace Np.UsersService.Core.Messaging.ModelEvents.Users;
 

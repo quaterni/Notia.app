@@ -5,6 +5,8 @@ using Np.UsersService.Core.Authentication.Keycloak.Models;
 using Np.UsersService.Core.Dtos.Users;
 using Np.UsersService.Core.Shared;
 using Np.UsersService.Core.Authentication.Errors;
+using Np.UsersService.Core.Authentication.Models;
+using System.Net;
 
 namespace Np.UsersService.Core.Authentication.Keycloak;
 
@@ -81,6 +83,24 @@ public class KeycloakIdentityService : IIdentityService
         return user;
     }
 
+    public async Task<Result> UpdateUserDataAsync(string identityId, UserUpdateRepresentation updateRepresentation, CancellationToken cancellationToken = default)
+    {
+        var url = new Uri($"{_identityClientOptions.RealmUsersManagementUrl}/{identityId}");
+
+        var response = await _httpClient.PutAsJsonAsync(
+            url, 
+            updateRepresentation, 
+            cancellationToken);
+
+        if(response.StatusCode.Equals(HttpStatusCode.NotFound))
+        {
+            return Result.Failure(IdentityErrors.UserNotFound);
+        }
+
+        response.EnsureSuccessStatusCode();
+        return Result.Success();
+    }
+
     private UserRepresentation CreateUserRepresentation(CreateUserRequest createUserRequest)
     {
         var _userCreationOptions = _identityClientOptions.RealmUserCreationOptions;
@@ -123,5 +143,6 @@ public class KeycloakIdentityService : IIdentityService
 
         return userIdentityId;
     }
+
 
 }
