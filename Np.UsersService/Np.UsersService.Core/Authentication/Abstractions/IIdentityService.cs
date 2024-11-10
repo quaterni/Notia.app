@@ -15,4 +15,6 @@ public interface IIdentityService
     Task<Result<UserView>> GetUserByCredentialsAsync(string username, string email, CancellationToken cancellationToken=default);
 
     Task<Result> UpdateUserDataAsync(string identityId, UserUpdateRepresentation updateRepresentation, CancellationToken cancellationToken=default);
+
+    Task<Result> UpdateUserPassword(string identityId, string newPassword, CancellationToken cancellationToken=default);
 }
