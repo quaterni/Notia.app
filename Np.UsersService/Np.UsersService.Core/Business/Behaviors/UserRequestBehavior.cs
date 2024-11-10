@@ -32,7 +32,7 @@ public partial class UserRequestBehavior<TRequest, TResponse> : IPipelineBehavio
         return await next();
     }
 
-    [LoggerMessage(Level = LogLevel.Information, Message ="User was found in users storage, identity id: {IdentityId}")]
+    [LoggerMessage(Level = LogLevel.Information, Message ="User found in users storage, identity id: {IdentityId}")]
     private static partial void LogUserFound(ILogger logger, string identityId);
 
     private async Task<User?> GetUser(string identityId, CancellationToken cancellationToken)
