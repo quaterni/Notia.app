@@ -51,7 +51,7 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand>
         }
         catch(DbUpdateConcurrencyException ex)
         {
-            throw new ConcurrentException(ex);
+            throw new ConcurrencyException(ex);
         }
 
         return Result.Success();
