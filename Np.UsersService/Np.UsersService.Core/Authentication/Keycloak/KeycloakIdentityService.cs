@@ -101,6 +101,26 @@ public class KeycloakIdentityService : IIdentityService
         return Result.Success();
     }
 
+    public async Task<Result> UpdateUserPassword(string identityId, string newPassword, CancellationToken cancellationToken = default)
+    {
+        var url = new Uri($"{_identityClientOptions.RealmUsersManagementUrl}/{identityId}/reset-password");
+        var credentialRepresentation = new CredentialRepresentation()
+        {
+            Temporary = false,
+            Type = PasswordCredentialType,
+            Value = newPassword
+        };
+        
+        var response = await _httpClient.PutAsJsonAsync(url, credentialRepresentation, cancellationToken);
+        if (response.StatusCode.Equals(HttpStatusCode.NotFound))
+        {
+            return Result.Failure(IdentityErrors.UserNotFound);
+        }
+
+        response.EnsureSuccessStatusCode();
+        return Result.Success();
+    }
+
     private UserRepresentation CreateUserRepresentation(CreateUserRequest createUserRequest)
     {
         var _userCreationOptions = _identityClientOptions.RealmUserCreationOptions;
@@ -143,6 +163,4 @@ public class KeycloakIdentityService : IIdentityService
 
         return userIdentityId;
     }
-
-
 }
