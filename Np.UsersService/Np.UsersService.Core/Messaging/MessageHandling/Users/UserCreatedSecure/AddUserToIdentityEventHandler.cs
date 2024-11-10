@@ -62,7 +62,7 @@ public partial class AddUserToIdentityEventHandler : INotificationHandler<UserCr
         }
         catch(DbUpdateConcurrencyException ex)
         {
-            throw new ConcurrentException(ex);
+            throw new ConcurrencyException(ex);
         }
 
         LogUserSyncronized(_logger, user.Id);
