@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Np.UsersService.Core.Authentication.Keycloak;
 using Np.UsersService.Core.Business;
 using Np.UsersService.Core.Data;
+using Np.UsersService.Core.Grpc;
 using Np.UsersService.Core.Messaging.MessageHandling;
 using Np.UsersService.Core.Messaging.Outbox;
 using Np.UsersService.Core.Messaging.RabbitMq;
@@ -28,6 +29,8 @@ builder.Services.AddBusiness();
 
 builder.Services.AddMessageHandling();
 
+builder.Services.AddGrpc();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -44,6 +47,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-
+app.MapGrpcServices();
 
 app.Run();
