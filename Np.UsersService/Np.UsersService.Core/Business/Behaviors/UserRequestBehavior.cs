@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Np.UsersService.Core.Business.Abstractions;
 using Np.UsersService.Core.Data;
+using Np.UsersService.Core.Exceptions;
 using Np.UsersService.Core.Models.Users;
 using Np.UsersService.Core.Shared;
 
@@ -23,7 +24,7 @@ public partial class UserRequestBehavior<TRequest, TResponse> : IPipelineBehavio
     public async Task<TResponse> Handle(UserRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var user = await GetUser(request.IdentityId, cancellationToken)
-            ?? throw new ApplicationException($"User not found by identity id {request.IdentityId}");
+            ?? throw new UserNotFoundException(request.IdentityId);
 
         request.User = user;
 
