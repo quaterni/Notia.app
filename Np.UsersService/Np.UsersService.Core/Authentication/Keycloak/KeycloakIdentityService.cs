@@ -33,7 +33,7 @@ public class KeycloakIdentityService : IIdentityService
             userRepresentation, 
             cancellationToken);
 
-        if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
+        if(response.StatusCode == HttpStatusCode.Conflict)
         {
             return Result.Failure<string>(IdentityErrors.UserExists);
         }
@@ -41,11 +41,19 @@ public class KeycloakIdentityService : IIdentityService
         return ExtreactIdentityIdFromHttpResponse(response);
     }
 
-    public async Task RemoveUserAsync(string identityId, CancellationToken cancellationToken = default)
+    public async Task<Result> RemoveUserAsync(string identityId, CancellationToken cancellationToken = default)
     {
         var url = new Uri($"{_identityClientOptions.RealmUsersManagementUrl}/{identityId}");
 
-        await _httpClient.DeleteAsync(url, cancellationToken);
+        var response = await _httpClient.DeleteAsync(url, cancellationToken);
+
+        if (response.StatusCode.Equals(HttpStatusCode.NotFound))
+        {
+            return Result.Failure(IdentityErrors.UserNotFound);
+        }
+
+        response.EnsureSuccessStatusCode();
+        return Result.Success();
     }
 
     public async Task<UserView?> GetUserByIdAsync(string identityId, CancellationToken cancellationToken = default)

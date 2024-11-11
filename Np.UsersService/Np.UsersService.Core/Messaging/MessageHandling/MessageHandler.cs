@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Newtonsoft.Json;
 using Np.UsersService.Core.Messaging.MessageHandling.Users.UserCreatedSecure;
+using Np.UsersService.Core.Messaging.MessageHandling.Users.UserDeleted;
 using Np.UsersService.Core.Messaging.MessageHandling.Users.UserUpdatedSecure;
 using Np.UsersService.Core.Messaging.ModelEvents.Users;
 using Np.UsersService.Core.Messaging.Models;
@@ -34,6 +35,13 @@ public partial class MessageHandler
             case nameof(UserUpdatedSecureEvent):
                 {
                     var e = DeserializeEvent<UserUpdatedSecureApplicationEvent>(message.Body);
+                    LogPublishEvent(_logger, e.GetType().Name); ;
+                    await _publisher.Publish(e);
+                    break;
+                }
+            case nameof(UserDeletedSecureEvent):
+                {
+                    var e = DeserializeEvent<UserDeletedSecureApplicationEvent>(message.Body);
                     LogPublishEvent(_logger, e.GetType().Name); ;
                     await _publisher.Publish(e);
                     break;

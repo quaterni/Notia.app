@@ -56,6 +56,12 @@ public class CustomExceptionMiddleware
                 "Validation error",
                 "One or more validation errors has occurred",
                 validationException.Errors),
+            UserNotFoundException userNotFoundException => new ExceptionDetails(
+                StatusCodes.Status401Unauthorized,
+                "Unauthorized",
+                "User not authorized",
+                "User not authorized",
+                null),
             _ => new ExceptionDetails(
                 StatusCodes.Status500InternalServerError,
                 "ServerError",
