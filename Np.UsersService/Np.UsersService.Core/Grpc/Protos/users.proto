@@ -1,0 +1,29 @@
+
+syntax = "proto3";
+
+option csharp_namespace="Np.UsersService.Core";
+
+service GrpcUsersService{
+	rpc GetUserById(GetUserByIdRequest) returns (UserInfo);
+	rpc GetUserByIdentityId(GetUserByIdentityIdRequest) returns (UserInfo);
+}
+
+message GrpcUuid {
+	string Value = 1;
+}
+
+message GetUserByIdRequest {
+	GrpcUuid Id = 1;
+}
+
+message GetUserByIdentityIdRequest {
+	string IdentityId = 1;
+}
+
+
+message UserInfo {
+	string Username = 1;
+	string Email = 2;
+	GrpcUuid Id = 3;
+	string IdentityId = 4;
+}
