@@ -120,6 +120,14 @@ public class UsersController : ControllerBase
         }
 
         var result = await _sender.Send(new UpdatePasswordCommand(userId, updatePasswordRequest.OldPassword, updatePasswordRequest.NewPassword));
+        if (result.IsFailed && result.Error.Equals(UpdatePasswordErrors.InvalidOldPasswordError))
+        {
+            return BadRequest(result.Error.Description);
+        }
+        if (result.IsFailed && result.Error.Equals(UpdatePasswordErrors.SamePasswordError))
+        {
+            return BadRequest(result.Error.Description);
+        }
         if (result.IsFailed)
         {
             throw new UnhandledErrorException(result.Error);
