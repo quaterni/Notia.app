@@ -22,12 +22,15 @@ namespace Np.NotesService.Application.Notes.RemoveNote
         public async Task<Result> Handle(RemoveNoteCommand request, CancellationToken cancellationToken)
         {
             var note = await _notesRepository.GetNoteById(request.NoteId);
-
-            if (note == null) 
+            if (note == null)
             {
                 return Result.Success();
             }
 
+            if (!note.User.Id.Equals(request.UserId!.Value))
+            {
+                return Result.Success();
+            }
             _notesRepository.Delete(note);
             note.AddDomainEvent(new NoteRemovedEvent(note.Id));
 

@@ -12,6 +12,7 @@ namespace Np.NotesService.Application
                 opt.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
 
                 opt.AddOpenBehavior(typeof(LoggingBehavoir<,>));
+                opt.AddOpenBehavior(typeof(UserRequestBehavior<,>));
             });
             return services;
         }

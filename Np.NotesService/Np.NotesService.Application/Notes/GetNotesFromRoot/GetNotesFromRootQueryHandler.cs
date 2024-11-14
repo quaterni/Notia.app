@@ -27,6 +27,7 @@ public class GetNotesFromRootQueryHandler : IQueryHandler<GetNotesFromRootQuery,
         IEnumerable<NoteResponse> relationsResponse;
         try
         {
+            // TODO: change relation service output to filter by user
             relationsResponse = await _relationsService.GetNotesFromRoot(cancellationToken);
         }
         catch(Exception e)
@@ -41,7 +42,7 @@ public class GetNotesFromRootQueryHandler : IQueryHandler<GetNotesFromRootQuery,
 
         var ids = relationsResponse.Select(r=> r.NoteId).ToArray();
         using var connection = _sqlConnectionFactory.CreateConnection();
-        var dbResponse = await connection.QueryAsync("SELECT title, id FROM notes WHERE id =ANY(@Ids)", new {Ids = ids.ToArray()});
+        var dbResponse = await connection.QueryAsync("SELECT title, id FROM notes WHERE id =ANY(@Ids) AND user_id=@UserId", new {Ids = ids.ToArray(), UserId=request.UserId!.Value});
         var noteResponses = dbResponse.Select(r=> new NoteItemDto(r.title, r.id));
 
         return new GetNotesFromRootResponse(noteResponses);

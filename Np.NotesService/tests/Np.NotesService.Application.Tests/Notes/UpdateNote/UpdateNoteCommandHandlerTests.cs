@@ -20,9 +20,9 @@ public class UpdateNoteCommandHandlerTests
 
     public UpdateNoteCommandHandlerTests()
     {
-        _updatingNote = Note.Create("Note to update", new Mock<IDateTimeProvider>().Object);
+        _updatingNote = Note.Create("Note to update", Guid.Empty, new Mock<IDateTimeProvider>().Object);
         _updatingNote.ClearDomainEvents();
-        _command = new UpdateNoteCommand("Updated Data", _updatingNote.Id);
+        _command = new UpdateNoteCommand("Updated Data", _updatingNote.Id, "") { UserId = Guid.Empty};
 
         _notesRepositoryMock = new();
         _unitOfWorkMock = new();
@@ -66,7 +66,7 @@ public class UpdateNoteCommandHandlerTests
 
         // Assert
         result.IsFailed.Should().BeTrue();
-        result.Message.Should().Be(Errors.NotFound);
+        result.Message.Should().Be(UpdateNoteErrors.NotFound);
     }
 
     [Fact]
