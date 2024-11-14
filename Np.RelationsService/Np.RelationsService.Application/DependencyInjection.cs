@@ -12,6 +12,7 @@ public static class DependencyInjection
         {
             opt.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
             opt.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            opt.AddOpenBehavior(typeof(UserRequestBehavior<,>));
         });
 
         return services;

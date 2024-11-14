@@ -30,7 +30,7 @@ namespace Np.RelationsService.Application.Notes.AddNote
                 return Result.Failed(Error.Undefined);
             }
 
-            var result = Note.Create(noteId);
+            var result = Note.Create(noteId, request.UserId);
 
             if (result.IsFailed)
             {

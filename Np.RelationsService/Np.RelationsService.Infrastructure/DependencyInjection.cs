@@ -3,16 +3,22 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Np.RelationsService.Application.Abstractions.Data;
 using Np.RelationsService.Application.Abstractions.Messaging.Events;
+using Np.RelationsService.Application.Abstractions.Users;
 using Np.RelationsService.Application.Services;
 using Np.RelationsService.Domain.Abstractions;
 using Np.RelationsService.Domain.Notes;
 using Np.RelationsService.Domain.Relations;
 using Np.RelationsService.Domain.RootEntries;
 using Np.RelationsService.Infrastructure.Data;
+using Np.RelationsService.Infrastructure.Messaging.Grpc.Users;
+using Np.RelationsService.Infrastructure.Messaging.Grpc;
 using Np.RelationsService.Infrastructure.Messaging.RabbitMq;
 using Np.RelationsService.Infrastructure.Messaging.RabbitMq.Options;
 using Np.RelationsService.Infrastructure.Outbox;
 using Np.RelationsService.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Np.RelationsService.Infrastructure.Authentication;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Np.RelationsService.Infrastructure
 {
@@ -20,12 +26,29 @@ namespace Np.RelationsService.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-
+            AddAuthentication(services, configuration);
             AddPersistance(services, configuration);
-
             AddMessaging(services, configuration);
 
             return services;
+        }
+
+
+        private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    var configurationOptions = new AuthenticationOptions();
+                    configuration.GetSection("Authentication").Bind(configurationOptions);
+                    options.Audience = configurationOptions.Audience;
+                    options.MetadataAddress = configurationOptions.MetadataAddress;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = configurationOptions.ValidIssuer
+                    };
+                });
         }
 
         private static void AddMessaging(IServiceCollection services, IConfiguration configuration)
@@ -43,6 +66,11 @@ namespace Np.RelationsService.Infrastructure
 
             services.AddHostedService<MessageBusWorker>();
             services.AddHostedService<OutboxWorker>();
+
+            services.Configure<GrpcOptions>(
+                GrpcOptions.Users,
+                configuration.GetRequiredSection("UsersService:Grpc"));
+            services.AddScoped<IUsersService, UsersService>();
         }
 
         private static void AddPersistance(IServiceCollection services, IConfiguration configuration)

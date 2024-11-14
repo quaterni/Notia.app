@@ -24,7 +24,12 @@ namespace Np.RelationsService.Application.Relations.RemoveRelation
 
             if (relation == null) 
             {
-                return Result.Failed(Error.Null);
+                return Result.Failed(RemoveRelationErrors.NotFound);
+            }
+
+            if (!relation.Incoming.UserId.Equals(request.UserId))
+            {
+                return Result.Failed(RemoveRelationErrors.NotFound);
             }
 
             _relationsRepository.RemoveRelation(relation);

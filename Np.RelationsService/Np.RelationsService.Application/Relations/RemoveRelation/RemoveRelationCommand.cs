@@ -2,5 +2,5 @@
 
 namespace Np.RelationsService.Application.Relations.RemoveRelation
 {
-    public sealed record  RemoveRelationCommand(Guid RelationId) : ICommand;
+    public sealed record  RemoveRelationCommand(Guid RelationId, string IdentityId) : UserRequest(IdentityId), ICommand;
 }

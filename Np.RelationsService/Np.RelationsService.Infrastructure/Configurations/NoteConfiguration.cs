@@ -17,6 +17,8 @@ namespace Np.RelationsService.Infrastructure.Configurations
 
             builder.HasKey(x => x.Id);
 
+            builder.Property(x=> x.UserId).IsRequired();
+
             builder
                 .Property<uint>("Version")
                 .IsRowVersion();

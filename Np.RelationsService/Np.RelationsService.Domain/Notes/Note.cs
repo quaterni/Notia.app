@@ -1,8 +1,4 @@
 ﻿using Np.RelationsService.Domain.Abstractions;
-using Np.RelationsService.Domain.Relations;
-using Np.RelationsService.Domain.RootEntries;
-using Np.RelationsService.Domain.RootEntries;
-using System.Linq;
 
 namespace Np.RelationsService.Domain.Notes
 {
@@ -12,18 +8,21 @@ namespace Np.RelationsService.Domain.Notes
         { 
         }
 
-        protected Note(Guid id) : base(id)
-        {            
+        protected Note(Guid id, Guid userId) : base(id)
+        {
+            UserId = userId;
         }
+
+        public Guid UserId { get; }
 
         /// <summary>
         /// Create new note 
         /// </summary>
-        /// <param name="id">Note id</param>
+        /// <param name="noteId">Note id</param>
         /// <returns>Result with note</returns>
-        public static Result<Note> Create(Guid id)
+        public static Result<Note> Create(Guid noteId, Guid userId)
         {
-            return new Note(id);
+            return new Note(noteId, userId);
         }
     }
 }
