@@ -2,5 +2,5 @@
 
 namespace Np.NotesService.Application.Notes.RemoveNote
 {
-    public sealed record RemoveNoteCommand(Guid NoteId) : ICommand;
+    public sealed record RemoveNoteCommand(Guid NoteId, string IdentityId) :UserRequest(IdentityId), ICommand;
 }

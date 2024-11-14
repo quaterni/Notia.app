@@ -15,12 +15,13 @@ namespace Np.NotesService.Domain.Notes
         {
         }
 
-        protected Note(string title, string content, Guid id, DateTime createdTime, DateTime lastUpdateTime) : base(id) 
+        protected Note(string title, string content, Guid id, DateTime createdTime, DateTime lastUpdateTime, User user) : base(id) 
         {
             Title = title;
             Content = content;
             CreateTime = createdTime;
             LastUpdateTime = lastUpdateTime;
+            User = user;
         }
 
         /// <summary >
@@ -40,13 +41,15 @@ namespace Np.NotesService.Domain.Notes
         /// </summary>
         public DateTime LastUpdateTime { get; private set; }
 
+        public User User { get; private set; }
+
         /// <summary>
         /// Create new note
         /// </summary>
         /// <param name="data">Data that added to the content and substring set to the title</param>
         /// <param name="dateTimeProvider">Provides current utc time</param>
         /// <returns>New note with own id</returns>
-        public static Note Create(string data, IDateTimeProvider dateTimeProvider)
+        public static Note Create(string data, Guid userId, IDateTimeProvider dateTimeProvider)
         {
             var currentTime = dateTimeProvider.GetCurrentTime();
 
@@ -55,9 +58,9 @@ namespace Np.NotesService.Domain.Notes
             var title = GetTitleFromData(data);
 
             var id = Guid.NewGuid();
-            var note = new Note(title, data, id, currentTime, currentTime);
+            var note = new Note(title, data, id, currentTime, currentTime, new User(userId));
 
-            note.AddDomainEvent(new NoteCreatedEvent(id));
+            note.AddDomainEvent(new NoteCreatedEvent(id, userId));
 
             return note;
         }

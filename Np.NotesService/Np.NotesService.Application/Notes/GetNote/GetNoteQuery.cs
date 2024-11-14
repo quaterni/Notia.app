@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Np.NotesService.Application.Notes.GetNote
 {
-    public sealed record GetNoteQuery(Guid Id) : IQuery<GetNoteResponse>;
+    public sealed record GetNoteQuery(Guid Id, string IdentityId) : UserRequest(IdentityId), IQuery<GetNoteResponse>;
 }

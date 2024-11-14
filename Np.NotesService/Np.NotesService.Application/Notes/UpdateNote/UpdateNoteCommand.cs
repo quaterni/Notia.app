@@ -2,5 +2,5 @@
 
 namespace Np.NotesService.Application.Notes.UpdateNote
 {
-    public sealed record  UpdateNoteCommand(string Data, Guid NoteId) : ICommand;
+    public sealed record  UpdateNoteCommand(string Data, Guid NoteId, string IdentityId) : UserRequest(IdentityId), ICommand;
 }

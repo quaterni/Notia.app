@@ -3,4 +3,4 @@
 
 namespace Np.NotesService.Domain.Notes.Events;
 
-public sealed record NoteCreatedEvent(Guid NoteId) : IDomainEvent;
+public sealed record NoteCreatedEvent(Guid NoteId, Guid UserId) : IDomainEvent;

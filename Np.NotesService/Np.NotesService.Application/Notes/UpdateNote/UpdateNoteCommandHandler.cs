@@ -27,11 +27,15 @@ namespace Np.NotesService.Application.Notes.UpdateNote
 
             if (note == null)
             { 
-                return Result.Failure(Errors.NotFound);
+                return Result.Failure(UpdateNoteErrors.NotFound);
+            }
+
+            if (!note.User.Id.Equals(request.UserId!.Value))
+            {
+                return Result.Failure(UpdateNoteErrors.NotFound);
             }
 
             note.UpdateNote(request.Data, _dateTimeProvider);
-
             _notesRepository.Update(note);
 
             try

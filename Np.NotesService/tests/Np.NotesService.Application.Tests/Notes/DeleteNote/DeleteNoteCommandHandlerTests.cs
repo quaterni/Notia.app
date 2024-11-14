@@ -16,7 +16,7 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
 {
     public class DeleteNoteCommandHandlerTests
     {
-        private readonly RemoveNoteCommand _command = new RemoveNoteCommand(Guid.NewGuid());
+        private readonly RemoveNoteCommand _command = new RemoveNoteCommand(Guid.NewGuid(), "") { UserId=Guid.Empty};
 
         private readonly RemoveNoteCommandHandler _handler;
 
@@ -38,7 +38,7 @@ namespace Np.NotesService.Application.Tests.Notes.DeleteNote
             _notesRepositoryMock
                 .Setup(x => x.GetNoteById(It.Is<Guid>(x => x.Equals(_command.NoteId))))
                 .Returns(()=> {
-                    var note = Note.Create("Mock Note", new Mock<IDateTimeProvider>().Object);
+                    var note = Note.Create("Mock Note", Guid.Empty, new Mock<IDateTimeProvider>().Object);
                     note.ClearDomainEvents();
                     return Task.FromResult<Note?>(note);
                 });

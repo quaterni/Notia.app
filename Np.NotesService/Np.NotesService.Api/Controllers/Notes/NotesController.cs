@@ -9,6 +9,8 @@ using Np.NotesService.Application.Notes.GetNotesFromRoot;
 using Np.NotesService.Application.Notes.UpdateNote;
 using Np.NotesService.Application.Relations.GetIncomingRelations;
 using Np.NotesService.Application.Relations.GetOutgoingRelations;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Np.NotesService.Api.Controllers.Notes;
 
@@ -32,9 +34,16 @@ public class NotesController : ControllerBase
 
     [HttpGet]
     [Route("root")]
+    [Authorize]
     public async Task<ActionResult<List<NoteItem>>> GetNotesFromRoot()
     {
-        var response = await _sender.Send(new GetNotesFromRootQuery());
+        var identityId = GetUserIdentityId();
+        if (identityId == null)
+        {
+            return Unauthorized();
+        }
+
+        var response = await _sender.Send(new GetNotesFromRootQuery(identityId));
 
         var noteResponses = response.Value.Notes.Select(n=> new NoteItem(n.Title, n.Id)).ToList();
 
@@ -42,9 +51,15 @@ public class NotesController : ControllerBase
     }
 
     [HttpGet("{id:guid}", Name=nameof(GetNote))]
+    [Authorize]
     public async Task<ActionResult<GetNoteResponse>> GetNote(Guid id)
     {
-        var result = await _sender.Send(new GetNoteQuery(id));
+        var identityId = GetUserIdentityId();
+        if (identityId == null)
+        {
+            return Unauthorized();
+        }
+        var result = await _sender.Send(new GetNoteQuery(id, identityId));
 
         if (result.IsFailed)
         {
@@ -55,10 +70,17 @@ public class NotesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize]
     public async Task<ActionResult> UpdateNote([FromBody] UpdateNoteRequest request, Guid id)
     {
-        var result = await _sender.Send(new UpdateNoteCommand(request.Data, id));
-        if (result.IsFailed && result.Message.Equals(Application.Notes.UpdateNote.Errors.NotFound))
+        var identityId = GetUserIdentityId();
+        if (identityId == null)
+        {
+            return Unauthorized();
+        }
+
+        var result = await _sender.Send(new UpdateNoteCommand(request.Data, id, identityId));
+        if (result.IsFailed && result.Message.Equals(UpdateNoteErrors.NotFound))
         {
             return NotFound(result.Message);
         }
@@ -67,27 +89,40 @@ public class NotesController : ControllerBase
             return StatusCode(500);
         }
 
-        return Ok();
+        return NoContent();
     }
 
 
     [HttpDelete("{id:guid}")]
+    [Authorize]
     public async Task<ActionResult> DeleteNote(Guid id)
     {
-        var result = await _sender.Send(new RemoveNoteCommand(id));
+        var identityId = GetUserIdentityId();
+        if (identityId == null)
+        {
+            return Unauthorized();
+        }
+
+        var result = await _sender.Send(new RemoveNoteCommand(id, identityId));
 
         if (result.IsFailed)
         {
             return StatusCode(500);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult> CreateNote([FromBody] AddNoteRequest request)
     {
-        var result = await _sender.Send(_mapper.Map<AddNoteCommand>(request));
+        var identityId = GetUserIdentityId();
+        if (identityId == null)
+        {
+            return Unauthorized();
+        }
+        var result = await _sender.Send(new AddNoteCommand(request.Data, identityId));
 
         if (result.IsFailed)
         {
@@ -119,6 +154,11 @@ public class NotesController : ControllerBase
                 r.Id,
                 new NoteItem(r.OutgoingItem.Title, r.OutgoingItem.Id),
                 new NoteItem(r.IncomingNote.Title, r.IncomingNote.Id))));
+    }
+
+    private string? GetUserIdentityId()
+    {
+        return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     }
 
 }

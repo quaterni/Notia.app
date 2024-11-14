@@ -26,7 +26,7 @@ namespace Np.NotesService.Domain.Tests.Notes
             var expectedTime = dateTimeProvider.GetCurrentTime();
 
             // Act
-            var note = Note.Create("test", dateTimeProvider);
+            var note = Note.Create("test", Guid.Empty, dateTimeProvider);
 
             // Assert
             Assert.Equal<DateTime>(expectedTime, note.CreateTime);
@@ -41,7 +41,7 @@ namespace Np.NotesService.Domain.Tests.Notes
             var expectedTime = dateTimeProvider.GetCurrentTime();
 
             // Act
-            var note = Note.Create("test", dateTimeProvider);
+            var note = Note.Create("test", Guid.Empty, dateTimeProvider);
 
             // Assert
             Assert.Equal<DateTime>(expectedTime, note.LastUpdateTime);
@@ -52,7 +52,7 @@ namespace Np.NotesService.Domain.Tests.Notes
         public void Create_Should_SetTitleFromData(NoteTestDto noteTestDto)
         {
             // Act
-            var note = Note.Create(noteTestDto.Data, _dateTimeProviderMock.Object);
+            var note = Note.Create(noteTestDto.Data, Guid.Empty, _dateTimeProviderMock.Object);
 
             // Assert
             Assert.Equal(noteTestDto.ExpectedTitle, note.Title);
@@ -63,7 +63,7 @@ namespace Np.NotesService.Domain.Tests.Notes
         public void Create_Should_AddNoteCreatedDomainEvent()
         {
             // Act
-            var note = Note.Create(NoteTestData.OneLineNote.Data, _dateTimeProviderMock.Object);
+            var note = Note.Create(NoteTestData.OneLineNote.Data, Guid.Empty, _dateTimeProviderMock.Object);
             var createdDomainEvent = note.DomainEvents
                 .FirstOrDefault(e => e.GetType().Equals(typeof(NoteCreatedEvent))) 
                     as NoteCreatedEvent;
@@ -78,7 +78,7 @@ namespace Np.NotesService.Domain.Tests.Notes
         public void UpdateNote_Should_SetTitleFromData(NoteTestDto noteTestDto)
         {
             // Arrange
-            var note = Note.Create("My note", _dateTimeProviderMock.Object);
+            var note = Note.Create("My note", Guid.Empty, _dateTimeProviderMock.Object);
 
             // Act
             note.UpdateNote(noteTestDto.Data, _dateTimeProviderMock.Object);
@@ -92,7 +92,7 @@ namespace Np.NotesService.Domain.Tests.Notes
         public void UpdateNote_Should_AddNoteUpdatedDomainEvent()
         {
             // Arrange
-            var note = Note.Create("My note", _dateTimeProviderMock.Object);
+            var note = Note.Create("My note", Guid.Empty, _dateTimeProviderMock.Object);
 
             // Act
             note.UpdateNote("New Title", _dateTimeProviderMock.Object);
@@ -108,7 +108,7 @@ namespace Np.NotesService.Domain.Tests.Notes
         public void UpdateNote_Should_SetLastUpdatedTimeFromDateTimeProvider()
         {
             // Arrange
-            var note = Note.Create("My note", _dateTimeProviderMock.Object);
+            var note = Note.Create("My note", Guid.Empty, _dateTimeProviderMock.Object);
             var expectedLastUpdated = new DateTime(2024, 9, 19, 0, 9, 35);
             _dateTimeProviderMock.Setup(x=> x.GetCurrentTime()).Returns(expectedLastUpdated);
 

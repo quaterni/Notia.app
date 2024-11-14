@@ -22,7 +22,7 @@ namespace Np.NotesService.Application.Notes.AddNote
 
         public async Task<Result<Guid>> Handle(AddNoteCommand request, CancellationToken cancellationToken)
         {
-            var note = Note.Create(request.Data, _dateTimeProvider);
+            var note = Note.Create(request.Data, request.UserId!.Value, _dateTimeProvider);
 
             _notesRepository.Add(note);
 

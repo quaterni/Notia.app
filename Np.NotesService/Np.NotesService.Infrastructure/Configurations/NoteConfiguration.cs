@@ -38,6 +38,11 @@ namespace Np.NotesService.Infrastructure.Configurations
                     dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc)
                 );
 
+            builder.OwnsOne(x => x.User, userBuilder =>
+            {
+                userBuilder.Property(x => x.Id).HasColumnName("user_id");
+            });
+
             builder.Property<uint>("Version")
                 .IsRowVersion();
         }
