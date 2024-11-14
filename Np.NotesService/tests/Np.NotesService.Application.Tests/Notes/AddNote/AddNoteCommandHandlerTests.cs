@@ -10,7 +10,10 @@ namespace Np.NotesService.Application.Tests.Notes.AddNote
 {
     public class AddNoteCommandHandlerTests
     {
-        private readonly AddNoteCommand _command = new AddNoteCommand("Title\n\nContent");
+        private readonly AddNoteCommand _command = new AddNoteCommand("Title\n\nContent", "")
+        {
+            UserId = Guid.Empty
+        };
 
         private readonly Mock<INotesRepository> _notesRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
@@ -81,7 +84,7 @@ namespace Np.NotesService.Application.Tests.Notes.AddNote
             await _handler.Handle(_command, default);
 
             note!.DomainEvents.Should().HaveCount(1);
-            note.DomainEvents.First().Should().Be(new NoteCreatedEvent(note.Id));
+            note.DomainEvents.First().Should().Be(new NoteCreatedEvent(note.Id, Guid.Empty));
         }
     }
 }

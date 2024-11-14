@@ -24,7 +24,12 @@ namespace Np.NotesService.Application.Notes.GetNote
 
             if (result == null)
             {
-                return Result.Failure<GetNoteResponse>(NoteErrors.NotFound);
+                return Result.Failure<GetNoteResponse>(GetNoteErrors.NotFound);
+            }
+
+            if(!((Guid)result.user_id).Equals(request.UserId!.Value))
+            {
+                return Result.Failure<GetNoteResponse>(GetNoteErrors.NotFound);
             }
 
             var note = new GetNoteResponse

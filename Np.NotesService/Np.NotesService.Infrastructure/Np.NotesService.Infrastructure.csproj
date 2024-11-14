@@ -14,6 +14,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -39,5 +40,7 @@
   <ItemGroup>
     <Protobuf Include=".\Messaging\Grpc\relations.proto" GrpcServices="Client" />
   </ItemGroup>
-
+	<ItemGroup>
+		<Protobuf Include=".\Messaging\Grpc\users.proto" GrpcServices="Client" />
+	</ItemGroup>
 </Project>

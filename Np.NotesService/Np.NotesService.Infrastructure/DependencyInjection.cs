@@ -1,11 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Np.NotesService.Application.Abstractions.Data;
 using Np.NotesService.Application.Abstractions.Outbox;
 using Np.NotesService.Application.Relations.Service;
+using Np.NotesService.Application.Users;
 using Np.NotesService.Domain.Abstractions;
 using Np.NotesService.Domain.Notes;
+using Np.NotesService.Infrastructure.Authorization;
 using Np.NotesService.Infrastructure.Data;
 using Np.NotesService.Infrastructure.Messaging.Grpc;
 using Np.NotesService.Infrastructure.Messaging.RabbitMq;
@@ -29,7 +33,25 @@ namespace Np.NotesService.Infrastructure
             AddPersistance(services, configuration);
 
             AddMessaging(services, configuration);
+            AddAuthentication(services, configuration);
             return services;
+        }
+
+        private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    var configurationOptions = new AuthenticationOptions();
+                    configuration.GetSection("Authentication").Bind(configurationOptions);
+                    options.Audience = configurationOptions.Audience;
+                    options.MetadataAddress = configurationOptions.MetadataAddress;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = configurationOptions.ValidIssuer
+                    };
+                });
         }
 
         private static void AddMessaging(IServiceCollection services, IConfiguration configuration)
@@ -39,6 +61,10 @@ namespace Np.NotesService.Infrastructure
                 configuration.GetRequiredSection("RelationsService:Grpc"));
             services.AddScoped<IRelationsService, GrpcRelationsService>();
 
+            services.Configure<GrpcOptions>(
+                GrpcOptions.Users,
+                configuration.GetRequiredSection("UsersService:Grpc"));
+            services.AddScoped<IUsersService, UsersService>();
 
             services.Configure<RabbitMqConnectionOptions>(
                 configuration.GetRequiredSection("RabbitMq:Connection"));
