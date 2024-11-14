@@ -37,15 +37,6 @@ public partial class RabbitMqQueueWorker : BackgroundService
 
         _channel = channelFactory.CreateChannel();
 
-        _channel.QueueDeclare(
-            queueOptions.QueueName,
-            queueOptions.Durable,
-            queueOptions.Exclusive,
-            queueOptions.AutoDelete,
-            arguments: null);
-
-        _channel.QueueBind(queueOptions.QueueName, queueOptions.ExchangeName, routingKey: string.Empty, arguments: null);
-
         _consumer = new EventingBasicConsumer(_channel);
 
         _consumer.Received += Consumer_Received;
