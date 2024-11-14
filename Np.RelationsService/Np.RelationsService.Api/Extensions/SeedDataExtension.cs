@@ -32,11 +32,11 @@ namespace Np.RelationsService.Api.Extensions
             }
 
 
-            var one = Note.Create(One.Id).Value;
-            var oneOne = Note.Create(OneOne.Id).Value;
-            var oneTwo = Note.Create(OneTwo.Id).Value;
-            var oneTwoOne = Note.Create(OneTwoOne.Id).Value;
-            var two = Note.Create(Two.Id).Value;
+            var one = Note.Create(One.Id, Guid.Empty).Value;
+            var oneOne = Note.Create(OneOne.Id, Guid.Empty).Value;
+            var oneTwo = Note.Create(OneTwo.Id, Guid.Empty).Value;
+            var oneTwoOne = Note.Create(OneTwoOne.Id, Guid.Empty).Value;
+            var two = Note.Create(Two.Id, Guid.Empty).Value;
 
             Console.WriteLine("--> Seeding notes");
 

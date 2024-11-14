@@ -17,6 +17,6 @@ internal class AddNoteApplicationEventHandler : IApplicationEventHandler<NoteCre
 
     public async Task Handle(NoteCreatedApplicationEvent notification, CancellationToken cancellationToken)
     {
-        await _sender.Send(new AddNoteCommand(notification.NoteId));
+        await _sender.Send(new AddNoteCommand(notification.NoteId, notification.UserId));
     }
 }

@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Np.RelationsService.Application.Notes.AddNote
 {
-    public sealed record  AddNoteCommand(Guid NoteId) : ICommand;
+    public sealed record  AddNoteCommand(Guid NoteId, Guid UserId) : ICommand;
 }

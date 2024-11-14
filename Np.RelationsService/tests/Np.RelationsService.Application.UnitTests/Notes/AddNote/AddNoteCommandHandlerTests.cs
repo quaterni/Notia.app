@@ -11,7 +11,7 @@ namespace Np.RelationsService.Application.UnitTests.Notes.AddNote
 {
     public class AddNoteCommandHandlerTests
     {
-        private readonly AddNoteCommand _command = new(NoteData.Note_1.Id);
+        private readonly AddNoteCommand _command = new(NoteData.Note_1.Id, Guid.Empty);
 
         private readonly AddNoteCommandHandler _sut;
 
