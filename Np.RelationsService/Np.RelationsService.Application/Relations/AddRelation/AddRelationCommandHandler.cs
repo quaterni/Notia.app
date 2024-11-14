@@ -37,6 +37,11 @@ namespace Np.RelationsService.Application.Relations.AddRelation
                 return Result.Failed(NotesErrors.NotFound);
             }
 
+            if(!incomingNote.UserId.Equals(request.UserId) || !outgoingNote.UserId.Equals(request.UserId))
+            {
+                return Result.Failed(NotesErrors.NotFound);
+            }
+
             if(await _relationsRepository.HasRelation(incomingNote, outgoingNote))
             {
                 return Result.Failed(RelationErrors.Duplication);

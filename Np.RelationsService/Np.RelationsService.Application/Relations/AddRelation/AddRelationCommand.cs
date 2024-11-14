@@ -2,5 +2,6 @@
 
 namespace Np.RelationsService.Application.Relations.AddRelation
 {
-    public sealed record AddRelationCommand(Guid OutgoingNoteId, Guid IncomingNoteId) : ICommand;
+    public sealed record AddRelationCommand(Guid OutgoingNoteId, Guid IncomingNoteId, string IdentityId)
+        : UserRequest(IdentityId), ICommand;
 }

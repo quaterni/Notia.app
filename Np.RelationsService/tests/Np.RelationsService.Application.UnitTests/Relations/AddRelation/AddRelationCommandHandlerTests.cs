@@ -13,7 +13,9 @@ namespace Np.RelationsService.Application.UnitTests.Relations.AddRelation;
 
 public class AddRelationCommandHandlerTests
 {
-    private readonly AddRelationCommand _command = new(new Guid("11111111-122b-4a75-b54a-0a477885b76d"), new Guid("21111111-122b-4a75-b54a-0a477885b76d"));
+    private readonly AddRelationCommand _command = new(new Guid("11111111-122b-4a75-b54a-0a477885b76d"), new Guid("21111111-122b-4a75-b54a-0a477885b76d"), "") {
+     UserId = Guid.Empty
+    };
 
     private readonly Mock<INotesRepository> _notesRepositoryMock;
     private readonly Mock<IRelationsRepository> _relationsRepositoryMock;
@@ -36,8 +38,8 @@ public class AddRelationCommandHandlerTests
 
     private void SetupNotesRepository()
     {
-        var outgoingNote = Note.Create(_command.OutgoingNoteId).Value;
-        var incomingNote = Note.Create(_command.IncomingNoteId).Value;
+        var outgoingNote = Note.Create(_command.OutgoingNoteId, Guid.Empty).Value;
+        var incomingNote = Note.Create(_command.IncomingNoteId, Guid.Empty).Value;
 
         _notesRepositoryMock
             .Setup(x => x.GetNoteById(

@@ -12,7 +12,10 @@ namespace Np.RelationsService.Application.UnitTests.Relations.RemoveRelation;
 
 public class RemoveRelationCommandHandlerTests
 {
-    private readonly RemoveRelationCommand _command = new(new Guid("11111111-122b-4a75-b54a-0a477885b76d"));
+    private readonly RemoveRelationCommand _command = new(new Guid("11111111-122b-4a75-b54a-0a477885b76d"), "")
+    {
+        UserId = Guid.Empty
+    };
 
     private readonly Mock<IRelationsRepository> _relationsRepositoryMock;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
@@ -32,8 +35,8 @@ public class RemoveRelationCommandHandlerTests
     private void SetupRelationsRepostiory()
     {
         var relation = Relation.Create(
-            Note.Create(new Guid("21111111-122b-4a75-b54a-0a477885b76d")).Value,
-            Note.Create(new Guid("31111111-122b-4a75-b54a-0a477885b76d")).Value).Value;
+            Note.Create(new Guid("21111111-122b-4a75-b54a-0a477885b76d"), Guid.Empty).Value,
+            Note.Create(new Guid("31111111-122b-4a75-b54a-0a477885b76d"), Guid.Empty).Value).Value;
 
         _relationsRepositoryMock
             .Setup(x => x.GetRelationById(It.Is<Guid>(id => id.Equals(_command.RelationId))))

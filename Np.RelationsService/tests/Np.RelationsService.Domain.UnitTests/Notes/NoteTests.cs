@@ -14,7 +14,7 @@ namespace Np.RelationsService.Domain.UnitTests.Notes
         public void Create_ShouldCreateNote()
         {
             // Act
-            var note = Note.Create(_noteId);
+            var note = Note.Create(_noteId, Guid.Empty);
 
             // Assert
             note.IsSuccess.Should().BeTrue();
