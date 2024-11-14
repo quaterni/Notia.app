@@ -89,12 +89,13 @@ services:
       - KC_DB_URL=jdbc:postgresql://users.identity.db:5432/keycloak
       - KC_DB_USERNAME=postgres
       - KC_DB_PASSWORD=postgres
-      - KC_HOSTNAME=http://users.identity:8080
+      - KC_HOSTNAME=users.identity
+      - KC_HTTP_PORT=28080
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
     command: ["start-dev"]
     ports:
-      - "19080:8080"
+      - "28080:28080"
     depends_on:
       - users.identity.db
   users.identity.db:
