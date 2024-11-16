@@ -22,12 +22,9 @@ internal class GetOutgoingRelationsQueryHandler : IQueryHandler<GetOutgoingRelat
         using var connection = _sqlConnectionFactory.CreateConnection();
 
         var dbResponse = await connection.QueryAsync(
-            "SELECT id, incoming_id FROM relations WHERE outgoing_id=@OutgoingID", 
+            "SELECT incoming_id FROM relations WHERE outgoing_id=@OutgoingID", 
             new { OutgoingId = outgoingNoteId});
 
-        var relations = dbResponse
-            .Select(x => new RelationItem(x.id, outgoingNoteId, x.incoming_id));
-
-        return new GetOutgoingRelationsResponse(relations);
+        return new GetOutgoingRelationsResponse(dbResponse.Select(x=> (Guid)x.incoming_id));
     }
 }

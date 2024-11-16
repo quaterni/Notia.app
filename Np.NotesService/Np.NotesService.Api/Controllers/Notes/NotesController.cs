@@ -7,10 +7,10 @@ using Np.NotesService.Application.Notes.RemoveNote;
 using Np.NotesService.Application.Notes.GetNote;
 using Np.NotesService.Application.Notes.GetNotesFromRoot;
 using Np.NotesService.Application.Notes.UpdateNote;
-using Np.NotesService.Application.Relations.GetIncomingRelations;
-using Np.NotesService.Application.Relations.GetOutgoingRelations;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Np.NotesService.Application.Notes.GetOutgoingNotes;
+using Np.NotesService.Application.Notes.GetIncomingNotes;
 
 namespace Np.NotesService.Api.Controllers.Notes;
 
@@ -45,9 +45,7 @@ public class NotesController : ControllerBase
 
         var response = await _sender.Send(new GetNotesFromRootQuery(identityId));
 
-        var noteResponses = response.Value.Notes.Select(n=> new NoteItem(n.Title, n.Id)).ToList();
-
-        return Ok(noteResponses);
+        return Ok(response.Value);
     }
 
     [HttpGet("{id:guid}", Name=nameof(GetNote))]
@@ -135,25 +133,34 @@ public class NotesController : ControllerBase
     [HttpGet("{outgoingNoteId:guid}/outgoings")]
     public async Task<ActionResult> GetOutgoingRelations(Guid outgoingNoteId)
     {
-        var result = await _sender.Send(new GetOutgoingRelationsQuery(outgoingNoteId));
+        var identityId = GetUserIdentityId();
+        if (identityId == null)
+        {
+            return Unauthorized();
+        }
+        var result = await _sender.Send(new GetOutgoingNotesQuery(outgoingNoteId, identityId));
 
-        return Ok(result.Value.Relations.Select(
-            r=> new RelationItem(
-                r.Id, 
-                new NoteItem(r.OutgoingItem.Title, r.OutgoingItem.Id), 
-                new NoteItem(r.IncomingNote.Title, r.IncomingNote.Id))));
+        if(result.IsFailed && result.Message.Equals(GetOutgoingNotesErrors.NotFound))
+        {
+            return NotFound(result.Message);
+        }
+        return Ok(result.Value);
     }
 
     [HttpGet("{incomingNoteId:guid}/incomings")]
     public async Task<ActionResult> GetIncomingRelations(Guid incomingNoteId)
     {
-        var result = await _sender.Send(new GetIncomingRelationsQuery(incomingNoteId));
-
-        return Ok(result.Value.Relations.Select(
-            r => new RelationItem(
-                r.Id,
-                new NoteItem(r.OutgoingItem.Title, r.OutgoingItem.Id),
-                new NoteItem(r.IncomingNote.Title, r.IncomingNote.Id))));
+        var identityId = GetUserIdentityId();
+        if (identityId == null)
+        {
+            return Unauthorized();
+        }
+        var result = await _sender.Send(new GetIncomingRelationsQuery(incomingNoteId, identityId));
+        if (result.IsFailed && result.Message.Equals(GetIncomingNotesErrors.NotFound))
+        {
+            return NotFound(result.Message);
+        }
+        return Ok(result.Value);
     }
 
     private string? GetUserIdentityId()
