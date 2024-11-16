@@ -9,17 +9,18 @@ namespace Np.RelationsService.Domain.Relations
 {
     public interface IRelationsRepository
     {
-        Task<bool> HasRelation(Note first, Note second);
+        Task<bool> HasRelation(Note first, Note second, CancellationToken cancellationToken = default);
 
         void AddRelation(Relation relation);
 
-        Task<Relation?> GetRelationById(Guid id);
+        Task<Relation?> GetRelationById(Guid id, CancellationToken cancellationToken = default);
+        Task<Relation?> GetRelationByNotes(Guid incomingNoteId, Guid outgoingNoteId, CancellationToken cancellationToken = default);
 
-        Task<bool> HasOutgoingRelations(Guid outgoingNoteId);
+        Task<bool> HasOutgoingRelations(Guid outgoingNoteId, CancellationToken cancellationToken = default);
 
-        Task<IEnumerable<Relation>> GetOutgoingRelations(Guid outgoingNoteId);
+        Task<IEnumerable<Relation>> GetOutgoingRelations(Guid outgoingNoteId, CancellationToken cancellationToken = default);
 
-        Task<IEnumerable<Relation>> GetIncomingRelations(Guid incomingNoteId);
+        Task<IEnumerable<Relation>> GetIncomingRelations(Guid incomingNoteId, CancellationToken cancellationToken = default);
 
         void RemoveRelation(Relation relation);
     }

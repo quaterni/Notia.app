@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Moq;
 using Np.RelationsService.Application.Notes.RemoveNote;
-using Np.RelationsService.Application.Relations.RemoveRelation;
+using Np.RelationsService.Application.Relations.RemoveRelationById;
 using Np.RelationsService.Domain.Abstractions;
 using Np.RelationsService.Domain.Notes;
 using Np.RelationsService.Domain.Relations;
@@ -74,11 +74,11 @@ public class RemoveNoteCommandHandlerTest
         List<Relation> outgoingRelations = [
             Relation.Create(_testingNote, NoteData.Note_0).Value];
         _relationsRepositoryMock
-            .Setup(x => x.GetIncomingRelations(It.Is<Guid>(id => id.Equals(_testingNote.Id))))
+            .Setup(x => x.GetIncomingRelations(It.Is<Guid>(id => id.Equals(_testingNote.Id)), It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult<IEnumerable<Relation>>(incomingRelations));
 
         _relationsRepositoryMock
-            .Setup(x => x.GetOutgoingRelations(It.Is<Guid>(id => id.Equals(_testingNote.Id))))
+            .Setup(x => x.GetOutgoingRelations(It.Is<Guid>(id => id.Equals(_testingNote.Id)), It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult<IEnumerable<Relation>>(outgoingRelations));
 
         await _sut.Handle(_command, default);

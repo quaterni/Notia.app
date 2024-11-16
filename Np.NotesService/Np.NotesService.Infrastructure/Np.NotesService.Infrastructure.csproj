@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include=".\Messaging\Grpc\relations.proto" GrpcServices="Client" />
+    <Protobuf Include="Messaging\Grpc\Relations\relations.proto" GrpcServices="Client" />
   </ItemGroup>
 	<ItemGroup>
 		<Protobuf Include=".\Messaging\Grpc\users.proto" GrpcServices="Client" />
