@@ -1,7 +1,7 @@
 ﻿
 using FluentAssertions;
 using Moq;
-using Np.RelationsService.Application.Relations.RemoveRelation;
+using Np.RelationsService.Application.Relations.RemoveRelationById;
 using Np.RelationsService.Domain.Abstractions;
 using Np.RelationsService.Domain.Notes;
 using Np.RelationsService.Domain.Relations;
@@ -12,7 +12,7 @@ namespace Np.RelationsService.Application.UnitTests.Relations.RemoveRelation;
 
 public class RemoveRelationCommandHandlerTests
 {
-    private readonly RemoveRelationCommand _command = new(new Guid("11111111-122b-4a75-b54a-0a477885b76d"), "")
+    private readonly RemoveRelationByIdCommand _command = new(new Guid("11111111-122b-4a75-b54a-0a477885b76d"), "")
     {
         UserId = Guid.Empty
     };
@@ -39,7 +39,7 @@ public class RemoveRelationCommandHandlerTests
             Note.Create(new Guid("31111111-122b-4a75-b54a-0a477885b76d"), Guid.Empty).Value).Value;
 
         _relationsRepositoryMock
-            .Setup(x => x.GetRelationById(It.Is<Guid>(id => id.Equals(_command.RelationId))))
+            .Setup(x => x.GetRelationById(It.Is<Guid>(id => id.Equals(_command.RelationId)), It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult<Relation?>(relation));
     }
 

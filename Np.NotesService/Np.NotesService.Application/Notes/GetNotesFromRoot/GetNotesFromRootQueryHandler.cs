@@ -5,46 +5,32 @@ using Np.NotesService.Application.Abstractions.Mediator;
 using Np.NotesService.Application.Exceptions;
 using Np.NotesService.Application.Dtos;
 using Np.NotesService.Domain.Abstractions;
-using Np.NotesService.Application.Relations.Service;
+using Np.NotesService.Application.Relations;
+using Np.NotesService.Domain.Notes;
 
 namespace Np.NotesService.Application.Notes.GetNotesFromRoot;
 
 public class GetNotesFromRootQueryHandler : IQueryHandler<GetNotesFromRootQuery, GetNotesFromRootResponse>
 {
     private readonly IRelationsService _relationsService;
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
-    public GetNotesFromRootQueryHandler(
-        IRelationsService relationsService,
-        ISqlConnectionFactory sqlConnectionFactory)
+    public GetNotesFromRootQueryHandler(IRelationsService relationsService)
     {
         _relationsService = relationsService;
-        _sqlConnectionFactory = sqlConnectionFactory;
     }
 
     public async Task<Result<GetNotesFromRootResponse>> Handle(GetNotesFromRootQuery request, CancellationToken cancellationToken)
     {
-        IEnumerable<NoteResponse> relationsResponse;
         try
         {
-            // TODO: change relation service output to filter by user
-            relationsResponse = await _relationsService.GetNotesFromRoot(cancellationToken);
+            var notes = await _relationsService.GetNotesFromRoot(
+                request.UserId ?? throw new ApplicationException("User id was null"),
+                cancellationToken);
+            return new GetNotesFromRootResponse(notes);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new ServiceRequestException("Exception has thrown from relations service", e);
         }
-
-        if(!relationsResponse.Any())
-        {
-            return new GetNotesFromRootResponse(new List<NoteItemDto>());
-        }
-
-        var ids = relationsResponse.Select(r=> r.NoteId).ToArray();
-        using var connection = _sqlConnectionFactory.CreateConnection();
-        var dbResponse = await connection.QueryAsync("SELECT title, id FROM notes WHERE id =ANY(@Ids) AND user_id=@UserId", new {Ids = ids.ToArray(), UserId=request.UserId!.Value});
-        var noteResponses = dbResponse.Select(r=> new NoteItemDto(r.title, r.id));
-
-        return new GetNotesFromRootResponse(noteResponses);
     }
 }

@@ -18,7 +18,9 @@ internal class GetRootEntriesQueryHandler : IQueryHandler<GetRootEntriesQuery, G
     {
         using var connection = _sqlConnectionFactory.CreateConnection();
 
-        var dbResponse = await connection.QueryAsync("SELECT id FROM root_entries");
+        var dbResponse = await connection.QueryAsync(
+            "SELECT root_entries.id FROM root_entries JOIN notes ON root_entries.id=notes.id WHERE notes.user_id=@UserId", 
+            new {request.UserId});
 
         var rootEntryResponse = new GetRootEntriesResponse(dbResponse.Select(d => (Guid)d.id));
 

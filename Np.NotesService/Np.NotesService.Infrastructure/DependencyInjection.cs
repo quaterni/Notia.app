@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Np.NotesService.Application.Abstractions.Data;
 using Np.NotesService.Application.Abstractions.Outbox;
-using Np.NotesService.Application.Relations.Service;
+using Np.NotesService.Application.Relations;
 using Np.NotesService.Application.Users;
 using Np.NotesService.Domain.Abstractions;
 using Np.NotesService.Domain.Notes;

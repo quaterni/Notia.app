@@ -19,7 +19,7 @@ internal class RelationsRepository : IRelationsRepository
         _dbContext.Add(relation);
     }
 
-    public async Task<IEnumerable<Relation>> GetIncomingRelations(Guid incomingNoteId)
+    public async Task<IEnumerable<Relation>> GetIncomingRelations(Guid incomingNoteId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<Relation>()
             .Include(r=> r.Incoming)
@@ -28,7 +28,7 @@ internal class RelationsRepository : IRelationsRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Relation>> GetOutgoingRelations(Guid outgoingNoteId)
+    public async Task<IEnumerable<Relation>> GetOutgoingRelations(Guid outgoingNoteId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<Relation>()
             .Include(r => r.Incoming)
@@ -37,7 +37,7 @@ internal class RelationsRepository : IRelationsRepository
             .ToListAsync();
     }
 
-    public async Task<Relation?> GetRelationById(Guid id)
+    public async Task<Relation?> GetRelationById(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<Relation>()
             .Include(r => r.Incoming)
@@ -45,14 +45,23 @@ internal class RelationsRepository : IRelationsRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<bool> HasOutgoingRelations(Guid outgoingNoteId)
+    public async Task<Relation?> GetRelationByNotes(Guid incomingNoteId, Guid outgoingNoteId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<Relation>()
+            .Include(r => r.Incoming)
+            .Include(r => r.Outgoing)
+            .Where(r => r.Incoming.Id.Equals(incomingNoteId) && r.Outgoing.Id.Equals(outgoingNoteId))
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> HasOutgoingRelations(Guid outgoingNoteId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<Relation>()
             .Where(r=> r.Outgoing.Id.Equals(outgoingNoteId))
             .AnyAsync();
     }
 
-    public async Task<bool> HasRelation(Note first, Note second)
+    public async Task<bool> HasRelation(Note first, Note second, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<Relation>()
             .AnyAsync(
