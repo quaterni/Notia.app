@@ -7,6 +7,6 @@ public class LogUserValidator : AbstractValidator<LogUserCommand>
     public LogUserValidator()
     {
         RuleFor(x=> x.Username).NotEmpty().MinimumLength(3);
-        RuleFor(x=> x.Password).NotEmpty();
+        RuleFor(x=> x.Password).NotEmpty().MinimumLength(3);
     }
 }
