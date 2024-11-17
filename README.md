@@ -4,10 +4,16 @@ You can create a note with content, content is any string data, first line or th
 
 The actual application implements a REST API for notes and relations
 ### In Progress
-`v0.2`
-- Create user authentication with tokens
+`v0.3`
+- Searching and filtration
 ### Start up
 Services must be configured before they can be started. Empty configurations can be found in the `appsetting.Empty.json` file, copy the contents to the `appsetting.json` file and fill in. The following describes requirements to configure each service.
+
+Users service
+- connection string of database with applied EF Core Migrations
+- Keycloak realm that enable change username of user and have private client
+- RabbitMQ options: connection, exchange and queue
+- outbox options
 
 Notes service:
 - connection string of database with applied EF Core Migrations
@@ -22,7 +28,33 @@ Relations service:
 - outbox options
 
 Easiest way run application from docker compose file `Deployment/compose.yaml`. Each service also contains dockerfile.
+
+### Authentification
+Services uses Keycloak as identity provider. Some enpoints require JWT Bearer authentificaton
+#### Get tokens
+1. Create user on `/register` endpoint of users service
+Parameters:
+- `username` 
+- `email`
+- `password`
+2. Login to get token on `/login` endpoint of users service
+Parameters:
+- `username` (applies email instead username)
+- `password`
+Response sample:
+``` json
+{
+    "token":{
+        "access_token": "token_data",
+        "refresh_token": "token_data"
+    }
+}
+```
+
+3. Copy data form `access_token` and add it as Bearer token on HTTP Requests
+
 ### Endpoints
+
 #### Notes service endpoints
 - POST `api/notes` - create note
 Request sample:
@@ -137,3 +169,49 @@ Request sample
 }
 ```
 - DELETE `api/relations/{id}` - delete relation, where `{id}` is relation's GUID
+
+#### Users service endpoints
+POST `/register` - registration endpoint (creates new user).
+Parameters:
+- `username` 
+- `email`
+- `password`
+
+POST `/login` - login endpoint, returns refresh and access JWT Tokens. Username can applies email instead username
+Parameters:
+- `username`
+- `password`
+
+Response sample:
+``` json
+{
+    "token": {
+        "access_token": "token_data",
+        "refresh_token": "token_data"
+    }
+}
+```
+
+GET `api/users/me` (Bearer authentication requires) - get information about user
+No parameters
+
+Response sample
+``` json
+{
+    "username": "user",
+    "email": "user@user.com",
+    "identityId": "a1725509-bdde-4b08-bb86-5c7023f1dee0"
+}
+```
+
+PUT `api/users/me` (Bearer authentication requires) - update user information
+Parameters:
+- `username` - optional
+- `email` - optional
+
+PUT `api/users/me/password` (Bearer authentication requires) - update user information
+Parameters:
+- `oldPassword`
+- `newPassword`
+
+DELETE `api/users/me` (Bearer authentication requires) - delete user
