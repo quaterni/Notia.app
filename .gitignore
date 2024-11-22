@@ -13,3 +13,4 @@ Deployment/compose-data
 *.user
 *.http
 /Backend/Deployment/compose-data
+/Desctop/.gitignore

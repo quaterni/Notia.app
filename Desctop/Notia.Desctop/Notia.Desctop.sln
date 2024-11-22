@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notia.Desctop", "Notia.Desctop.csproj", "{30A5989E-93A8-4D93-93AC-7BCDE9DD592D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notia.Desctop.Desktop", "..\Notia.Desctop.Desktop\Notia.Desctop.Desktop.csproj", "{19DED351-5E23-4CD1-98F2-6375B4D7F5AE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{30A5989E-93A8-4D93-93AC-7BCDE9DD592D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30A5989E-93A8-4D93-93AC-7BCDE9DD592D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30A5989E-93A8-4D93-93AC-7BCDE9DD592D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30A5989E-93A8-4D93-93AC-7BCDE9DD592D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19DED351-5E23-4CD1-98F2-6375B4D7F5AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19DED351-5E23-4CD1-98F2-6375B4D7F5AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19DED351-5E23-4CD1-98F2-6375B4D7F5AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19DED351-5E23-4CD1-98F2-6375B4D7F5AE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4583E31A-20DE-43DB-AF7E-093E14DFE963}
+	EndGlobalSection
+EndGlobal
