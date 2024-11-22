@@ -4,8 +4,10 @@ You can create a note with content, content is any string data, first line or th
 
 The actual application implements a REST API for notes and relations
 ### In Progress
-`v0.3`
+
 - Searching and filtration
+- Desctop client
+- Note types
 ### Start up
 Services must be configured before they can be started. Empty configurations can be found in the `appsetting.Empty.json` file, copy the contents to the `appsetting.json` file and fill in. The following describes requirements to configure each service.
 
