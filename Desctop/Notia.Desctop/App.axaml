@@ -1,10 +1,17 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Notia.Desctop.App"
+			 xmlns:pagesViewModels="using:Notia.Desctop.ViewModels.Pages"
+			 xmlns:pagesViews="using:Notia.Desctop.Views.Pages"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>
+	<Application.DataTemplates>
+		<DataTemplate DataType="{x:Type pagesViewModels:LoadingPageViewModel}">
+			<pagesViews:LoadingPageView></pagesViews:LoadingPageView>
+		</DataTemplate>
+	</Application.DataTemplates>
 </Application>
