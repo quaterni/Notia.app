@@ -1,10 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Notia.Desctop.BackgroundWorkers;
+using Notia.Desctop.Data;
 using Notia.Desctop.Routing;
 using Notia.Desctop.Services.Accounts.Abstractions;
 using Notia.Desctop.Services.Accounts.Http;
@@ -17,6 +19,8 @@ using Notia.Desctop.ViewModels;
 using Notia.Desctop.ViewModels.Pages;
 using Notia.Desctop.Views;
 using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace Notia.Desctop;
 
@@ -34,12 +38,23 @@ public partial class App : Application
         var builder = CreateApplicaitonBuilder();
         _host = builder.Build();
 
-        _host.Start();
 
         var sp = _host.Services;
 
+        _host.Start();
+
         var router = sp.GetRequiredService<AppRouter>();
-        router.Navigate<LoginPageViewModel>();
+        var sessionStore = sp.GetRequiredService<SessionStore>();
+
+        if (sessionStore.HasSession)
+        {
+            router.Navigate<TestingLoginPageViewModel>();
+
+        }
+        else
+        {
+            router.Navigate<LoginPageViewModel>();
+        }
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -72,6 +87,9 @@ public partial class App : Application
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder();
 
+        builder.Services.AddDbContext<ApplicationDbContext>(
+            opt => opt.UseSqlite(builder.Configuration.GetConnectionString("Database")));
+
         builder.Services.AddSingleton<AppRouter>();
         builder.Services.AddSingleton<SessionStore>();
         builder.Services.AddScoped<ISessionService, LocalSessionService>();
@@ -82,6 +100,7 @@ public partial class App : Application
         builder.Services.AddSingleton<MainViewModel>();
 
         builder.Services.AddHostedService<SessionObserver>();
+
 
         AddLoginPage(builder.Services, builder.Configuration);
 
@@ -96,5 +115,13 @@ public partial class App : Application
         services.AddHttpClient<HttpAccountService>();
         services.Configure<HttpAccountServiceOptions>(configuration.GetSection("HttpAccountService"));
         services.AddSingleton<IAccountService, HttpAccountService>();
+    }
+
+    private static void MigrateDatabase(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        Debug.WriteLine("Current Working Directory: " + Directory.GetCurrentDirectory());
+        dbContext.Database.Migrate();
     }
 }

@@ -1,7 +1,10 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
+using Notia.Desctop.Data;
 using Notia.Desctop.Services.Abstractions;
 using Notia.Desctop.Services.Sessions.Abstractions;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,23 +12,47 @@ namespace Notia.Desctop.Services.Sessions.Local;
 
 internal class LocalSessionService : ISessionService
 {
-    public Task<Result> AddSession(Session session, CancellationToken cancellationToken = default)
+    private readonly ApplicationDbContext _dbContext;
+
+    public LocalSessionService(ApplicationDbContext dbContext)
     {
-        return Task.FromResult(Result.Failure(SessionServiceErrors.Unavailable));
+        _dbContext = dbContext;
     }
 
-    public Task<Result<Session>> GetLastAccessedSession(CancellationToken cancellationToken = default)
+    public async Task<Result> AddSession(Session session, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(Result.Failure<Session>(SessionServiceErrors.Unavailable));
+        _dbContext.Add(session);
+        await _dbContext.SaveChangesAsync();
+
+        return Result.Success();
     }
 
-    public Task<Result> RemoveSession(Guid sessionId, CancellationToken cancellationToken = default)
+    public async Task<Result<Session>> GetLastAccessedSession(CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(Result.Failure(SessionServiceErrors.Unavailable));
+        var session = await _dbContext
+            .Set<Session>()
+            .OrderByDescending(s => s.LastAccess)
+            .FirstOrDefaultAsync();
+
+        if (session is null) 
+        {
+            return Result.Failure<Session>(Error.NullValue);
+        }
+        return session;
     }
 
-    public Task<Result> UpdateSession(Session session, CancellationToken cancellationToken = default)
+    public async Task<Result> RemoveSession(Guid sessionId, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(Result.Failure(SessionServiceErrors.Unavailable));
+        await _dbContext.Set<Session>().Where(s=> s.SessionId ==sessionId).ExecuteDeleteAsync();
+
+        return Result.Success();
+    }
+
+    public async Task<Result> UpdateSession(Session session, CancellationToken cancellationToken = default)
+    {
+        _dbContext.Update(session);
+        await _dbContext.SaveChangesAsync();
+
+        return Result.Success();
     }
 }

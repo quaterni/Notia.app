@@ -26,6 +26,7 @@ internal class SessionStore : ReactiveObject
     {
         _serviceProvider = serviceProvider;
         _appRouter = appRouter;
+        OnInitialization(serviceProvider);
     }
 
     public Session? CurrentSession 
@@ -55,7 +56,7 @@ internal class SessionStore : ReactiveObject
 
         await sessionService.AddSession(session);
 
-        Dispatcher.UIThread.Post(() => CurrentSession = session);
+        CurrentSession = session;
         _appRouter.Navigate<TestingLoginPageViewModel>();
         return Result.Success();
     }
@@ -102,6 +103,26 @@ internal class SessionStore : ReactiveObject
         var sessionService = scope.ServiceProvider.GetRequiredService<ISessionService>();
         await sessionService.RemoveSession(_currentSession.SessionId);
 
-        Dispatcher.UIThread.Post(() => CurrentSession = null!);
+        CurrentSession = null!;
+    }
+
+    private async void OnInitialization(IServiceProvider serviceProvider)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var sessionService = scope.ServiceProvider.GetRequiredService<ISessionService>();
+        var dateTimeProvider = scope.ServiceProvider.GetRequiredService<IDateTimeProvider>();
+
+        var resultSession = sessionService.GetLastAccessedSession().Result;
+        if (resultSession.IsFailed)
+        {
+            CurrentSession = null!;
+            return;
+        }
+        var session = resultSession.Value;
+        session.LastAccess = dateTimeProvider.CurrentTime();
+
+        await sessionService.UpdateSession(session);
+
+        CurrentSession = session;
     }
 }
