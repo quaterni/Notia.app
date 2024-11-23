@@ -14,3 +14,4 @@ Deployment/compose-data
 *.http
 /Backend/Deployment/compose-data
 /Desctop/.gitignore
+/Desctop/Notia.Desctop/appsettings.json
