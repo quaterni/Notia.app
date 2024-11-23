@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:data="using:Notia.Desctop.ViewModels.Pages"
+             x:Class="Notia.Desctop.Views.Pages.LoginPageView">
+	<UserControl.Styles>
+		<Style Selector="TextBlock">
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="FontSize" Value="14"/>
+		</Style>
+		<Style Selector="TextBox">
+			<Setter Property="MinWidth" Value="150"/>
+			<Setter Property="Margin" Value="5 5 0 5"/>
+		</Style>
+		<Style Selector="Button">
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		</Style>
+	</UserControl.Styles>
+	<Grid HorizontalAlignment="Center"
+				VerticalAlignment="Center">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		
+		<TextBlock Grid.Row="0" 
+				   Grid.Column="0"
+				   Text="Username:"/>
+		<TextBox Grid.Row="0" 
+				 Grid.Column="1"
+				 Text="{Binding Username}"/>
+
+		<TextBlock Grid.Row="1" 
+				   Grid.Column="0"
+				   Text="Password:"/>
+		<TextBox Grid.Row="1" 
+				 Grid.Column="1"
+				 Text="{Binding Password}"/>
+
+		<Border Grid.Row="2" Grid.ColumnSpan="2"
+				IsVisible="{Binding IsLoggingFailed}"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Center">
+			<TextBlock Foreground="Crimson" 
+					   Text="Input incorrect, try again" 
+					   FontSize="12" 
+					   Margin="5"/>
+		</Border>
+		
+		<Grid Grid.Row="3" Grid.ColumnSpan="2">
+			<Button Content="Login" 
+					Command="{Binding LoginCommand}"/>			
+		</Grid>
+
+		<Grid Grid.Row="4" Grid.ColumnSpan="2">
+			<Button Content="Create account"/>
+		</Grid>
+	</Grid>
+</UserControl>
