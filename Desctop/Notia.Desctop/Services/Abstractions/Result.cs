@@ -11,6 +11,7 @@ internal class Result
 
     protected internal Result()
     {        
+        _isSuccess = true;
     }
 
     protected internal Result(Error error)
@@ -19,7 +20,7 @@ internal class Result
         _isSuccess = false;
     }
 
-    public bool IsSuccess { get; set; }
+    public bool IsSuccess => _isSuccess;
 
     public bool IsFailed => !IsSuccess;
 
