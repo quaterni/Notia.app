@@ -11,19 +11,25 @@ public class AppRouter : ReactiveObject
 {
     private readonly IServiceProvider _serviceProvider;
 
+    private PageViewModel _currentPageViewModel;
+
     public AppRouter(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-       CurrentPage = _serviceProvider.GetRequiredService<LoadingPageViewModel>();
+        _currentPageViewModel = _serviceProvider.GetRequiredService<LoadingPageViewModel>();
     }
 
-    public PageViewModel CurrentPage { get; private set; }
+    public PageViewModel CurrentPageViewModel
+    {
+        get => _currentPageViewModel;
+        set => this.RaiseAndSetIfChanged(ref _currentPageViewModel, value);
+    }
 
     public void Navigate<TPage>() where TPage : PageViewModel
     {
         try
         {
-            CurrentPage = _serviceProvider.GetRequiredService<TPage>();
+            CurrentPageViewModel = _serviceProvider.GetRequiredService<TPage>();
         }
         catch 
         {
