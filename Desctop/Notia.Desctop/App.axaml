@@ -13,5 +13,11 @@
 		<DataTemplate DataType="{x:Type pagesViewModels:LoadingPageViewModel}">
 			<pagesViews:LoadingPageView></pagesViews:LoadingPageView>
 		</DataTemplate>
+		<DataTemplate DataType="{x:Type pagesViewModels:LoginPageViewModel}">
+			<pagesViews:LoginPageView></pagesViews:LoginPageView>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type pagesViewModels:TestingLoginPageViewModel}">
+			<pagesViews:TestingLoginPageView></pagesViews:TestingLoginPageView>
+		</DataTemplate>
 	</Application.DataTemplates>
 </Application>
