@@ -44,7 +44,7 @@ Parameters:
 - `username` (applies email instead username)
 - `password`
 Response sample:
-``` json
+``` 
 {
     "token":{
         "access_token": "token_data",
@@ -185,7 +185,7 @@ Parameters:
 - `password`
 
 Response sample:
-``` json
+``` 
 {
     "token": {
         "access_token": "token_data",
