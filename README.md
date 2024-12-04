@@ -1,4 +1,4 @@
-np is the backend of a hypertext note application built on a microservice architecture
+Notia is the backend of a hypertext note application built on a microservice architecture
 ### How it works
 You can create a note with content, content is any string data, first line or the first 400 characters of the content is note title. Notes can be linked to each other. A note that links to another note is an outgoing note and a linked note is an incoming note.
 
