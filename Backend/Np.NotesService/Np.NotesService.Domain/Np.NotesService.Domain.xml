@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Np.NotesService.Domain</name>
+    </assembly>
+    <members>
+        <member name="F:Np.NotesService.Domain.Notes.Note.TitleMaxLength">
+            <summary>
+            Max amount characters of the title
+            </summary>
+        </member>
+        <member name="P:Np.NotesService.Domain.Notes.Note.Title">
+            <summary >
+            Represents substring of the first line or the first characters of the content 
+            </summary>
+        </member>
+        <member name="P:Np.NotesService.Domain.Notes.Note.CreateTime">
+            <summary>
+            Date of note creation (utc)
+            </summary>
+        </member>
+        <member name="P:Np.NotesService.Domain.Notes.Note.LastUpdateTime">
+            <summary>
+            Date of the last content update (utc)
+            </summary>
+        </member>
+        <member name="M:Np.NotesService.Domain.Notes.Note.Create(System.String,System.Guid,Np.NotesService.Domain.Abstractions.IDateTimeProvider)">
+            <summary>
+            Create new note
+            </summary>
+            <param name="data">Data that added to the content and substring set to the title</param>
+            <param name="dateTimeProvider">Provides current utc time</param>
+            <returns>New note with own id</returns>
+        </member>
+        <member name="M:Np.NotesService.Domain.Notes.Note.UpdateNote(System.String,Np.NotesService.Domain.Abstractions.IDateTimeProvider)">
+            <summary>
+            Update note data
+            </summary>
+            <remarks>
+            Set the LastUpdateTimeUtc from <see cref="!:dateTimeProvider"/> 
+            <br/>
+            Result always successful
+            </remarks>       
+            <param name="data">Data that added to the content and substring set to the title</param>
+            <param name="dateTimeProvider">Provides current utc time</param>
+        </member>
+    </members>
+</doc>

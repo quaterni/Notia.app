@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Np.NotesService.Infrastructure</name>
+    </assembly>
+    <members>
+        <member name="T:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.RelationsReflection">
+            <summary>Holder for reflection information generated from Messaging/Grpc/Relations/relations.proto</summary>
+        </member>
+        <member name="P:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.RelationsReflection.Descriptor">
+            <summary>File descriptor for Messaging/Grpc/Relations/relations.proto</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.GrpcUuid.ValueFieldNumber">
+            <summary>Field number for the "value" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.GetNotesFromRootRequest.UserIdFieldNumber">
+            <summary>Field number for the "user_id" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.GetNotesFromRootResponse.NoteIdsFieldNumber">
+            <summary>Field number for the "note_ids" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.GetOutgoingRelationsRequest.NoteIdFieldNumber">
+            <summary>Field number for the "note_id" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.GetOutgoingRelationsResponse.NoteIdsFieldNumber">
+            <summary>Field number for the "note_ids" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.GetIncomingRelationsRequest.NoteIdFieldNumber">
+            <summary>Field number for the "note_id" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.GetIncomingRelationsResponse.NoteIdsFieldNumber">
+            <summary>Field number for the "note_ids" field.</summary>
+        </member>
+        <member name="P:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.RelationsService.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.RelationsService.RelationsServiceClient">
+            <summary>Client for RelationsService</summary>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.RelationsService.RelationsServiceClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for RelationsService</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.RelationsService.RelationsServiceClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for RelationsService that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.RelationsService.RelationsServiceClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.RelationsService.RelationsServiceClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.Relations.RelationsService.RelationsServiceClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
+        <member name="T:Np.NotesService.Infrastructure.Messaging.Grpc.UsersReflection">
+            <summary>Holder for reflection information generated from Messaging/Grpc/users.proto</summary>
+        </member>
+        <member name="P:Np.NotesService.Infrastructure.Messaging.Grpc.UsersReflection.Descriptor">
+            <summary>File descriptor for Messaging/Grpc/users.proto</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.GrpcUuid.ValueFieldNumber">
+            <summary>Field number for the "Value" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.GetUserByIdRequest.IdFieldNumber">
+            <summary>Field number for the "Id" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.GetUserByIdentityIdRequest.IdentityIdFieldNumber">
+            <summary>Field number for the "IdentityId" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.UserInfo.UsernameFieldNumber">
+            <summary>Field number for the "Username" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.UserInfo.EmailFieldNumber">
+            <summary>Field number for the "Email" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.UserInfo.IdFieldNumber">
+            <summary>Field number for the "Id" field.</summary>
+        </member>
+        <member name="F:Np.NotesService.Infrastructure.Messaging.Grpc.UserInfo.IdentityIdFieldNumber">
+            <summary>Field number for the "IdentityId" field.</summary>
+        </member>
+        <member name="P:Np.NotesService.Infrastructure.Messaging.Grpc.GrpcUsersService.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:Np.NotesService.Infrastructure.Messaging.Grpc.GrpcUsersService.GrpcUsersServiceClient">
+            <summary>Client for GrpcUsersService</summary>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.GrpcUsersService.GrpcUsersServiceClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for GrpcUsersService</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.GrpcUsersService.GrpcUsersServiceClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for GrpcUsersService that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.GrpcUsersService.GrpcUsersServiceClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.GrpcUsersService.GrpcUsersServiceClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Messaging.Grpc.GrpcUsersService.GrpcUsersServiceClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
+        <member name="T:Np.NotesService.Infrastructure.Migrations.init">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.init.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.init.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.init.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Np.NotesService.Infrastructure.Migrations.AddRowVersion">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.AddRowVersion.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.AddRowVersion.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.AddRowVersion.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Np.NotesService.Infrastructure.Migrations.OutboxEntries">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.OutboxEntries.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.OutboxEntries.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.OutboxEntries.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Np.NotesService.Infrastructure.Migrations.UserId">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.UserId.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.UserId.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Np.NotesService.Infrastructure.Migrations.UserId.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
