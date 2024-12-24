@@ -11,6 +11,8 @@ services:
         condition: service_started
       messagebus:
         condition: service_healthy
+      kafka:
+        condition: service_started
   notes.db:
     image: postgres:latest
     environment:
@@ -108,3 +110,28 @@ services:
       - ./compose-data/users_identity_db:/var/lib/postgresql/data
     ports:
       - "5436:5432"
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # Map all listeners
+      KAFKA_LISTENERS: |
+        PLAINTEXT_INTERNAL://0.0.0.0:29092,PLAINTEXT_EXTERNAL://0.0.0.0:9092
+      # Advertise listeners for clients
+      KAFKA_ADVERTISED_LISTENERS: |
+        PLAINTEXT_INTERNAL://kafka:29092,PLAINTEXT_EXTERNAL://localhost:9092
+      # Map listeners to protocols
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: |
+        PLAINTEXT_INTERNAL:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT
+      # Specify the listener for inter-broker communication
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+    ports:
+      - "9092:9092"
