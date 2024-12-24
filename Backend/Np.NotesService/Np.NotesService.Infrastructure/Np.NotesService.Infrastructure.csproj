@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" Version="2.6.1" />
     <PackageReference Include="EFCore.NamingConventions" Version="8.0.3" />
     <PackageReference Include="Google.Protobuf" Version="3.28.2" />
     <PackageReference Include="Grpc.Net.Client" Version="2.66.0" />
@@ -44,8 +45,5 @@
   </ItemGroup>
 	<ItemGroup>
 		<Protobuf Include=".\Messaging\Grpc\users.proto" GrpcServices="Client" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Messaging\Kafka\" />
 	</ItemGroup>
 </Project>

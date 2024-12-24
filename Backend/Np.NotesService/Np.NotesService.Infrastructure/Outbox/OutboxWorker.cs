@@ -16,36 +16,10 @@ namespace Np.NotesService.Infrastructure.Outbox;
 
 internal partial class OutboxWorker : BackgroundService
 {
-    [LoggerMessage(Level=LogLevel.Information, Message="Outbox worker starting")]
-    static partial void LogStartingWorker(ILogger logger);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker stopping")]
-    static partial void LogStoppingWorker(ILogger logger);
-
-    [LoggerMessage(Level = LogLevel.Trace, Message = "Checking outbox entries")]
-    static partial void LogCheckEntries(ILogger logger);
-
-    [LoggerMessage(Level = LogLevel.Trace, Message = "Outbox entries are empty")]
-    static partial void LogEmptyEntries(ILogger logger);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker take {Amount} entries")]
-    static partial void LogEntriesAmount(ILogger logger, int amount);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker processing entry: {Id}")]
-    static partial void LogProcessingEntry(ILogger logger, Guid id);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker refreshed entry: {Id}")]
-    static partial void LogEntryRefreshed(ILogger logger, Guid id);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker sent event: {EventName}")]
-    static partial void LogEventSent(ILogger logger, string eventName);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker remove entry: {Id}")]
-    static partial void LogRemoveEntry(ILogger logger, Guid id);
-
     private readonly IServiceProvider _provider;
     private readonly IRabbitMqChannelFactory _rabbitMqChannelFactory;
     private readonly ILogger<OutboxWorker> _logger;
+    private readonly IProducer<EventDto> _producer;
     private IModel? _channel;
 
     private readonly OutboxOptions _outboxOptions;
@@ -54,11 +28,13 @@ internal partial class OutboxWorker : BackgroundService
         IServiceProvider provider, 
         IRabbitMqChannelFactory rabbitMqChannelFactory, 
         IOptions<OutboxOptions> options,
-        ILogger<OutboxWorker> logger)
+        ILogger<OutboxWorker> logger,
+        IProducer<EventDto> producer)
     {
         _provider = provider;
         _rabbitMqChannelFactory = rabbitMqChannelFactory;
         _logger = logger;
+        _producer = producer;
         _outboxOptions = options.Value;
     }
 
@@ -126,6 +102,9 @@ internal partial class OutboxWorker : BackgroundService
         var body = JsonConvert.SerializeObject(eventDto);
 
         _channel.BasicPublish("events", string.Empty, body: Encoding.UTF8.GetBytes(body));
+
+        // TODO: Refactor producers
+        //_producer.SendAsync(eventDto).Wait();
     }
 
 
@@ -142,6 +121,34 @@ internal partial class OutboxWorker : BackgroundService
         LogStoppingWorker(_logger);
 
         _channel!.Dispose();
+        _producer?.Dispose();
         return base.StopAsync(cancellationToken);
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker starting")]
+    static partial void LogStartingWorker(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker stopping")]
+    static partial void LogStoppingWorker(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Trace, Message = "Checking outbox entries")]
+    static partial void LogCheckEntries(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Trace, Message = "Outbox entries are empty")]
+    static partial void LogEmptyEntries(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker take {Amount} entries")]
+    static partial void LogEntriesAmount(ILogger logger, int amount);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker processing entry: {Id}")]
+    static partial void LogProcessingEntry(ILogger logger, Guid id);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker refreshed entry: {Id}")]
+    static partial void LogEntryRefreshed(ILogger logger, Guid id);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker sent event: {EventName}")]
+    static partial void LogEventSent(ILogger logger, string eventName);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox worker remove entry: {Id}")]
+    static partial void LogRemoveEntry(ILogger logger, Guid id);
 }

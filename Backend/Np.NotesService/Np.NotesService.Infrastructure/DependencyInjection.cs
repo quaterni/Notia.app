@@ -11,7 +11,10 @@ using Np.NotesService.Domain.Abstractions;
 using Np.NotesService.Domain.Notes;
 using Np.NotesService.Infrastructure.Authorization;
 using Np.NotesService.Infrastructure.Data;
+using Np.NotesService.Infrastructure.Messaging.Abstractions;
 using Np.NotesService.Infrastructure.Messaging.Grpc;
+using Np.NotesService.Infrastructure.Messaging.Kafka;
+using Np.NotesService.Infrastructure.Messaging.Kafka.Options;
 using Np.NotesService.Infrastructure.Messaging.RabbitMq;
 using Np.NotesService.Infrastructure.Outbox;
 using Np.NotesService.Infrastructure.Repositories;
@@ -76,6 +79,11 @@ namespace Np.NotesService.Infrastructure
                 configuration.GetRequiredSection("OutboxOptions"));
             services.AddScoped<OutboxRepository>();
             services.AddHostedService<OutboxWorker>();
+
+            services.Configure<KafkaConnection>(configuration.GetRequiredSection("Messaging:Kafka:Connection"));
+            services.Configure<BaseProducerOptions>(configuration.GetRequiredSection("Messaging:Kafka:Producers:Notes"));
+            services.AddSingleton<IProducer<EventDto>, KafkaNotesProducer<EventDto, BaseProducerOptions>>();
+
         }
 
         private static void AddPersistance(
