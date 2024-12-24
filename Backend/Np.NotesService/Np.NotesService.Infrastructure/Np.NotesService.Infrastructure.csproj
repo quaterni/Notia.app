@@ -45,4 +45,7 @@
 	<ItemGroup>
 		<Protobuf Include=".\Messaging\Grpc\users.proto" GrpcServices="Client" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Messaging\Kafka\" />
+	</ItemGroup>
 </Project>

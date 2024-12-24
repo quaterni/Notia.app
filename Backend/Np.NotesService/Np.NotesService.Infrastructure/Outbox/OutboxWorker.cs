@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Np.NotesService.Application.Abstractions.Outbox;
 using Np.NotesService.Domain.Abstractions;
+using Np.NotesService.Infrastructure.Messaging.Abstractions;
 using Np.NotesService.Infrastructure.Messaging.RabbitMq;
 using RabbitMQ.Client;
 using System.Text;

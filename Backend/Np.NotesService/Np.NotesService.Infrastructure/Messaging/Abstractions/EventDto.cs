@@ -1,5 +1,4 @@
-﻿
-namespace Np.NotesService.Infrastructure.Messaging.RabbitMq;
+﻿namespace Np.NotesService.Infrastructure.Messaging.Abstractions;
 
 public class EventDto
 {
